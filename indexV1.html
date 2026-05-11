@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BitcoinBlastVault</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0008;
+  --magenta:#c0007a;
+  --magenta2:#ff00aa;
+  --gold:#ffd700;
+  --gold2:#ffaa00;
+  --green:#00ff88;
+  --red:#ff3355;
+  --card:#1a0012;
+  --card2:#220018;
+  --border:#3d0028;
+  --text:#fff;
+  --text2:#cc99bb;
+  --glow:0 0 20px #c0007a88;
+  --glow2:0 0 40px #ffd70066;
+}
+.light-mode{
+  --bg:#f8edf5;
+  --card:#fff0f8;
+  --card2:#ffe0f0;
+  --border:#e0a0c8;
+  --text:#1a0012;
+  --text2:#7a3060;
+  --glow:0 0 20px #c0007a44;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100vh;overflow-x:hidden;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Rajdhani',sans-serif;
+  font-size:16px;
+  position:relative;
+  transition:background .4s,color .4s;
+}
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%,#6b003a44 0%,transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 100%,#3d002244 0%,transparent 60%),
+    radial-gradient(ellipse 50% 50% at 80% 50%,#ff00aa11 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#0a0008;}
+::-webkit-scrollbar-thumb{background:var(--magenta);border-radius:2px;}
+
+/* HEADER */
+#header{
+  position:fixed;top:0;left:0;right:0;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 14px;
+  background:linear-gradient(180deg,#0d0008f0,#0a000880);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  z-index:1000;
+}
+#hamburger{
+  background:none;border:none;cursor:pointer;
+  display:flex;flex-direction:column;gap:5px;padding:6px;
+  border-radius:8px;transition:background .2s;
+}
+#hamburger:hover{background:#3d002844;}
+#hamburger span{
+  display:block;width:22px;height:2px;
+  background:var(--magenta2);border-radius:2px;
+  transition:all .3s;
+}
+#logo{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Orbitron',monospace;
+  font-size:12px;font-weight:900;
+  color:var(--gold);
+  text-shadow:0 0 12px #ffd70099;
+  letter-spacing:.5px;
+}
+#logo img{width:20px;height:20px;border-radius:50%;object-fit:cover;}
+#logo .star{font-size:11px;}
+#bal-btn{
+  display:flex;align-items:center;gap:5px;
+  background:linear-gradient(135deg,var(--magenta),#6b003a);
+  border:1px solid var(--magenta2);
+  color:#fff;padding:7px 12px;border-radius:20px;
+  cursor:pointer;font-family:'Rajdhani',sans-serif;
+  font-weight:700;font-size:12px;
+  box-shadow:var(--glow);
+  transition:all .3s;white-space:nowrap;
+}
+#bal-btn:hover{box-shadow:0 0 30px #c0007acc;transform:scale(1.03);}
+#bal-ngn-display{color:var(--gold);}
+
+/* MENU */
+#menu-overlay{
+  position:fixed;inset:0;background:#00000099;
+  z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+#menu-overlay.open{opacity:1;pointer-events:all;}
+#menu-panel{
+  position:fixed;top:0;left:-280px;bottom:0;width:260px;
+  background:linear-gradient(180deg,#1e0016,#0a0008);
+  border-right:1px solid var(--border);
+  z-index:2001;transition:left .35s cubic-bezier(.4,0,.2,1);
+}
+#menu-panel.open{left:0;}
+#menu-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 20px 16px;border-bottom:1px solid var(--border);
+}
+#menu-head h2{font-family:'Orbitron',monospace;font-size:13px;color:var(--gold);}
+#menu-close{background:none;border:none;color:var(--magenta2);font-size:22px;cursor:pointer;line-height:1;}
+#menu-user-info{
+  padding:14px 20px;border-bottom:1px solid var(--border);
+  font-size:12px;color:var(--text2);
+}
+#menu-user-info strong{color:var(--gold);display:block;font-size:14px;margin-top:2px;}
+.menu-item{
+  display:flex;align-items:center;gap:14px;
+  padding:15px 20px;cursor:pointer;
+  transition:background .2s;border-bottom:1px solid #2a001822;
+  font-size:15px;font-weight:600;color:var(--text);
+}
+.menu-item:hover{background:#2a001888;}
+.menu-item .mi{font-size:18px;}
+
+/* MODALS */
+.modal-overlay{
+  position:fixed;inset:0;
+  background:#00000099;backdrop-filter:blur(6px);
+  z-index:3000;display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;padding:16px;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:linear-gradient(145deg,var(--card),var(--card2));
+  border:1px solid var(--border);border-radius:20px;
+  padding:26px 22px;width:100%;max-width:360px;
+  box-shadow:0 0 60px #c0007a44,0 20px 60px #00000088;
+  transform:translateY(30px) scale(.96);
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.open .modal{transform:translateY(0) scale(1);}
+.modal h2{
+  font-family:'Orbitron',monospace;font-size:15px;color:var(--gold);
+  margin-bottom:18px;text-align:center;text-shadow:var(--glow2);
+}
+.modal-input{
+  width:100%;background:#0d0008;
+  border:1px solid var(--border);color:var(--text);
+  padding:11px 13px;border-radius:10px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;
+  margin-bottom:10px;outline:none;transition:border-color .2s;
+  -webkit-appearance:none;
+}
+.modal-input:focus{border-color:var(--magenta2);}
+.modal-input::placeholder{color:var(--text2);}
+select.modal-input{cursor:pointer;background:#0d0008;color:var(--text);}
+.btn-row{display:flex;gap:10px;margin-top:6px;}
+.btn-primary{
+  flex:1;padding:12px;border-radius:10px;
+  background:linear-gradient(135deg,var(--magenta),#6b003a);
+  border:none;color:#fff;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;transition:all .2s;box-shadow:var(--glow);
+}
+.btn-primary:hover{box-shadow:0 0 30px #c0007acc;transform:translateY(-1px);}
+.btn-secondary{
+  flex:1;padding:12px;border-radius:10px;
+  background:#1a0012;border:1px solid var(--border);
+  color:var(--text2);
+  font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;
+  cursor:pointer;transition:all .2s;
+}
+.btn-secondary:hover{border-color:var(--magenta);color:var(--text);}
+.modal-link{
+  color:var(--magenta2);cursor:pointer;font-size:13px;
+  text-decoration:underline;text-align:center;display:block;
+  margin-top:10px;
+}
+.modal-link:hover{color:var(--gold);}
+
+/* SUCCESS POPUP */
+#success-popup{
+  position:fixed;top:50%;left:50%;
+  transform:translate(-50%,-60%) scale(.8);
+  background:linear-gradient(145deg,#0d2010,#0a1a08);
+  border:1px solid var(--green);
+  border-radius:20px;padding:28px 22px;
+  text-align:center;z-index:5000;
+  opacity:0;pointer-events:none;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 0 60px #00ff8844;
+  min-width:260px;max-width:320px;
+}
+#success-popup.show{opacity:1;pointer-events:all;transform:translate(-50%,-50%) scale(1);}
+.sp-icon{font-size:46px;margin-bottom:10px;}
+#sp-title{color:var(--green);font-family:'Orbitron',monospace;font-size:15px;margin-bottom:8px;}
+#sp-msg{color:#aaffcc;font-size:13px;line-height:1.5;}
+
+/* MAIN */
+#main{padding-top:68px;padding-bottom:130px;position:relative;z-index:1;min-height:100vh;}
+
+/* BALANCE BAR */
+#balance-bar{
+  display:flex;justify-content:center;gap:8px;
+  padding:10px 12px 4px;flex-wrap:wrap;
+}
+.bal-item{
+  text-align:center;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:7px 12px;min-width:80px;
+  flex:1;max-width:110px;
+}
+.bal-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;}
+.bal-value{font-family:'Orbitron',monospace;font-size:11px;color:var(--gold);font-weight:700;margin-top:2px;}
+
+/* MINING AREA */
+#mining-area{
+  display:flex;flex-direction:column;align-items:center;
+  padding:16px 16px 8px;position:relative;
+}
+#particle-zone{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:240px;height:240px;pointer-events:none;z-index:10;
+}
+.particle{
+  position:absolute;
+  font-family:'Orbitron',monospace;font-size:11px;font-weight:700;
+  color:var(--gold);pointer-events:none;
+  animation:particleRise 1.8s ease-out forwards;
+  text-shadow:0 0 8px var(--gold);
+}
+@keyframes particleRise{
+  0%{opacity:1;transform:translateY(0) scale(1);}
+  100%{opacity:0;transform:translateY(-90px) scale(.5);}
+}
+#mining-img-wrap{
+  position:relative;width:180px;height:180px;cursor:pointer;
+  filter:drop-shadow(0 0 20px #c0007a88);
+  transition:filter .3s;
+}
+#mining-img-wrap:hover{filter:drop-shadow(0 0 40px #c0007acc);}
+#mining-img-wrap.mining{
+  animation:imgPulse 2s ease-in-out infinite;
+  filter:drop-shadow(0 0 30px #ffd70099);
+}
+@keyframes imgPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+#mining-img{
+  width:180px;height:180px;object-fit:contain;border-radius:50%;
+  animation:floatImg 4s ease-in-out infinite;
+  transition:opacity .4s;
+}
+@keyframes floatImg{
+  0%,100%{transform:translateY(0px) rotate(0deg);}
+  25%{transform:translateY(-8px) rotate(1deg);}
+  75%{transform:translateY(5px) rotate(-1deg);}
+}
+#mine-label{
+  margin-top:10px;font-size:11px;color:var(--text2);
+  letter-spacing:2px;text-transform:uppercase;
+}
+#mine-status{
+  font-family:'Orbitron',monospace;font-size:10px;
+  color:var(--magenta2);margin-top:3px;min-height:14px;text-align:center;
+}
+
+/* CHARGE BAR */
+#charge-wrap{width:88%;max-width:320px;margin:12px auto 0;}
+#charge-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px;}
+#charge-track{
+  width:100%;height:10px;background:#1a0012;
+  border-radius:10px;border:1px solid var(--border);overflow:hidden;
+}
+#charge-fill{
+  height:100%;width:0%;
+  background:linear-gradient(90deg,var(--magenta),var(--magenta2),var(--gold));
+  border-radius:10px;transition:width .5s linear;
+  box-shadow:0 0 10px var(--magenta2);
+  position:relative;overflow:hidden;
+}
+#charge-fill::after{
+  content:'';position:absolute;top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,#ffffff44,transparent);
+  animation:chargeSweep 2s infinite;
+}
+@keyframes chargeSweep{0%{left:-100%;}100%{left:220%;};}
+#charge-pct{
+  text-align:center;font-family:'Orbitron',monospace;
+  font-size:10px;color:var(--magenta2);margin-top:4px;
+}
+#mine-counter{text-align:center;margin-top:10px;}
+#mine-count-val{
+  font-family:'Orbitron',monospace;font-size:18px;
+  color:var(--magenta2);font-weight:900;
+  text-shadow:0 0 16px var(--magenta2);
+}
+#mine-count-label{font-size:10px;color:var(--text2);letter-spacing:2px;}
+
+/* TABS */
+#tabs-bar{
+  display:flex;margin:16px 12px 0;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;
+}
+.tab-btn{
+  flex:1;padding:11px 4px;background:none;border:none;
+  color:var(--text2);font-family:'Rajdhani',sans-serif;
+  font-weight:700;font-size:13px;cursor:pointer;
+  transition:all .25s;letter-spacing:.5px;
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--magenta),#6b003a);
+  color:#fff;box-shadow:var(--glow);
+}
+#tab-content{padding:14px 12px;}
+
+/* EARN INFO */
+.earn-info-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:16px;
+}
+.earn-info-card p{font-size:13px;color:var(--text2);line-height:2;}
+
+/* REFERRAL */
+.ref-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:18px;margin-bottom:12px;
+}
+.ref-code-box{
+  display:flex;align-items:center;gap:10px;
+  background:#0d0008;border:1px solid var(--magenta);
+  border-radius:10px;padding:12px 16px;margin:10px 0;
+}
+.ref-code{
+  font-family:'Orbitron',monospace;font-size:20px;
+  color:var(--gold);letter-spacing:4px;flex:1;text-align:center;
+}
+.ref-copy-btn{
+  background:var(--magenta);border:none;color:#fff;
+  padding:7px 12px;border-radius:8px;cursor:pointer;
+  font-size:12px;font-weight:700;font-family:'Rajdhani',sans-serif;
+  transition:all .2s;
+}
+.ref-copy-btn:hover{background:var(--magenta2);}
+.btn-full{
+  width:100%;padding:13px;border-radius:10px;
+  background:linear-gradient(135deg,var(--magenta),#6b003a);
+  border:none;color:#fff;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;transition:all .2s;box-shadow:var(--glow);margin-bottom:10px;
+}
+.btn-full:hover{box-shadow:0 0 30px #c0007acc;}
+.btn-share{
+  width:100%;padding:13px;border-radius:10px;
+  background:linear-gradient(135deg,#25d366,#128c7e);
+  border:none;color:#fff;
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;
+  cursor:pointer;transition:all .2s;
+}
+.btn-share:hover{opacity:.9;}
+
+/* SWAP */
+.coin-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:12px 14px;margin-bottom:8px;
+  transition:border-color .2s;
+}
+.coin-row:hover{border-color:var(--magenta);}
+.coin-icon{font-size:22px;min-width:28px;text-align:center;}
+.coin-info{flex:1;}
+.coin-name{font-weight:700;font-size:14px;}
+.coin-sub{font-size:11px;color:var(--text2);}
+.coin-price{text-align:right;}
+.coin-val{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
+.coin-change{font-size:11px;font-weight:700;}
+.coin-change.up{color:var(--green);}
+.coin-change.down{color:var(--red);}
+#download-apk{
+  width:100%;padding:14px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  border:none;color:#0d0008;
+  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
+  cursor:pointer;transition:all .2s;margin-top:10px;box-shadow:var(--glow2);
+}
+#download-apk:hover{box-shadow:0 0 40px #ffd70099;transform:translateY(-2px);}
+
+/* BALANCE CARD BOTTOM SHEET */
+#balance-card-overlay{
+  position:fixed;inset:0;background:#00000099;backdrop-filter:blur(4px);
+  z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;
+  display:flex;align-items:flex-end;justify-content:center;
+}
+#balance-card-overlay.open{opacity:1;pointer-events:all;}
+#balance-card{
+  background:linear-gradient(145deg,#1e0016,#0d0008);
+  border:1px solid var(--border);
+  border-radius:24px 24px 0 0;
+  padding:24px 20px 34px;
+  width:100%;max-width:480px;
+  transform:translateY(100%);
+  transition:transform .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 -20px 60px #c0007a44;
+}
+#balance-card-overlay.open #balance-card{transform:translateY(0);}
+.bc-handle{
+  width:40px;height:4px;background:#3d0028;
+  border-radius:2px;margin:0 auto 20px;
+}
+#balance-card h2{
+  font-family:'Orbitron',monospace;font-size:14px;color:var(--gold);
+  margin-bottom:14px;text-align:center;
+}
+.bal-card-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--border);
+}
+.bal-card-label{color:var(--text2);font-size:13px;}
+.bal-card-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--gold);}
+#withdraw-btn-main{
+  width:100%;padding:14px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  border:none;color:#0d0008;
+  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
+  cursor:pointer;transition:all .2s;margin-top:18px;box-shadow:var(--glow2);
+}
+#withdraw-btn-main:hover{transform:translateY(-2px);box-shadow:0 0 40px #ffd70099;}
+#close-bal-btn{
+  width:100%;padding:12px;border-radius:12px;
+  background:#1a0012;border:1px solid var(--border);
+  color:var(--text2);font-family:'Rajdhani',sans-serif;
+  font-weight:600;font-size:14px;cursor:pointer;margin-top:8px;
+}
+
+/* WITHDRAW LOADING */
+#withdraw-loading{
+  position:fixed;inset:0;background:#000000cc;z-index:6000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+#withdraw-loading.show{opacity:1;pointer-events:all;}
+.wl-spinner{
+  width:60px;height:60px;border-radius:50%;
+  border:4px solid #3d0028;border-top-color:var(--gold);
+  animation:spin 1s linear infinite;margin-bottom:16px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.wl-text{font-family:'Orbitron',monospace;color:var(--gold);font-size:13px;}
+
+/* SETTINGS */
+.toggle-wrap{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.toggle-label{font-size:14px;font-weight:600;}
+.toggle{
+  position:relative;width:48px;height:25px;
+  background:#3d0028;border-radius:13px;cursor:pointer;transition:background .3s;
+}
+.toggle.on{background:var(--magenta);}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:19px;height:19px;border-radius:50%;background:#fff;transition:left .3s;
+}
+.toggle.on::after{left:26px;}
+.speed-wrap{padding:14px 0;}
+.speed-label{
+  display:flex;justify-content:space-between;
+  font-size:14px;font-weight:600;margin-bottom:10px;
+}
+.speed-val{color:var(--magenta2);}
+input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:6px;}
+.speed-info{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.6;}
+
+/* FORGOT PW */
+#fp-result{
+  background:#0d0008;border:1px solid var(--green);
+  border-radius:10px;padding:12px;margin:10px 0;display:none;
+}
+#fp-result label{font-size:11px;color:var(--text2);}
+#fp-pw-show{
+  font-family:'Orbitron',monospace;font-size:14px;color:var(--gold);
+  display:block;margin:4px 0 10px;
+}
+
+/* EXCHANGE */
+.exc-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;border-bottom:1px solid var(--border);
+}
+.exc-coin{font-weight:700;font-size:14px;}
+.exc-rate{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
+
+/* ALARM */
+.alarm-info{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.7;}
+#alarm-status{margin-top:10px;font-size:13px;color:var(--green);text-align:center;}
+
+/* SECTION TITLE */
+.section-title{
+  font-family:'Orbitron',monospace;font-size:11px;color:var(--magenta2);
+  letter-spacing:2px;margin-bottom:12px;text-transform:uppercase;
+}
+
+/* NOTIFICATION */
+#notif{
+  position:fixed;top:68px;left:50%;
+  transform:translateX(-50%) translateY(-100px);
+  background:linear-gradient(135deg,#0d2010,#081508);
+  border:1px solid var(--green);border-radius:10px;
+  padding:11px 18px;font-size:13px;color:#aaffcc;
+  z-index:7000;transition:transform .4s cubic-bezier(.4,0,.2,1);
+  text-align:center;min-width:220px;
+  box-shadow:0 0 30px #00ff8844;white-space:nowrap;
+}
+#notif.show{transform:translateX(-50%) translateY(8px);}
+#notif.error{
+  background:linear-gradient(135deg,#1a0810,#0d0508);
+  border-color:var(--red);color:#ffaaaa;
+  box-shadow:0 0 30px #ff335544;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <button id="hamburger" onclick="openMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div id="logo">
+    BitcoinBlastVault
+    <img src="icon.png" alt="icon" onerror="this.style.display='none'"/>
+  </div>
+  <button id="bal-btn" onclick="openBalCard()">
+    💰 <span id="bal-ngn-display">₦0.00</span>
+  </button>
+</div>
+
+<!-- MENU OVERLAY -->
+<div id="menu-overlay" onclick="closeMenu()"></div>
+<div id="menu-panel">
+  <div id="menu-head">
+    <h2>⛏️ MENU</h2>
+    <button id="menu-close" onclick="closeMenu()">✕</button>
+  </div>
+  <div id="menu-user-info" style="display:none;padding:14px 20px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);">
+    <span>Logged in as</span>
+    <strong id="menu-username-label" style="color:var(--gold);display:block;font-size:14px;margin-top:2px;">—</strong>
+  </div>
+  <div class="menu-item" onclick="closeMenu();openModal('create-modal')"><span class="mi">👤</span> Create Account</div>
+  <div class="menu-item" onclick="closeMenu();openModal('login-modal')"><span class="mi">🔐</span> Login</div>
+  <div class="menu-item" onclick="closeMenu();openModal('alarm-modal')"><span class="mi">🔔</span> Alarm</div>
+  <div class="menu-item" onclick="closeMenu();openModal('settings-modal')"><span class="mi">⚙️</span> Settings</div>
+  <div class="menu-item" onclick="closeMenu();openModal('exchange-modal')"><span class="mi">💱</span> Exchange</div>
+</div>
+
+<!-- CREATE ACCOUNT MODAL -->
+<div class="modal-overlay" id="create-modal">
+  <div class="modal">
+    <h2>👤 Create Account</h2>
+    <input class="modal-input" id="ca-username" placeholder="Username" autocomplete="off"/>
+    <input class="modal-input" id="ca-phone" placeholder="Phone Number" type="tel"/>
+    <input class="modal-input" id="ca-password" placeholder="Password" type="password"/>
+    <input class="modal-input" id="ca-email" placeholder="Email Address" type="email"/>
+    <input class="modal-input" id="ca-pet" placeholder="Pet Name (for password recovery)"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="submitCreateAccount()">Submit</button>
+      <button class="btn-secondary" onclick="closeModal('create-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal">
+  <div class="modal">
+    <h2>🔐 Login</h2>
+    <input class="modal-input" id="li-email" placeholder="Email Address" type="email"/>
+    <input class="modal-input" id="li-password" placeholder="Password" type="password"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="submitLogin()">Login</button>
+      <button class="btn-secondary" onclick="closeModal('login-modal')">Cancel</button>
+    </div>
+    <span class="modal-link" onclick="closeModal('login-modal');openModal('fp-modal')">Forgot Password?</span>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="fp-modal">
+  <div class="modal">
+    <h2>🔑 Forgot Password</h2>
+    <input class="modal-input" id="fp-username" placeholder="Your Username"/>
+    <input class="modal-input" id="fp-pet" placeholder="Your Pet Name"/>
+    <button class="btn-primary" style="width:100%;margin-bottom:12px" onclick="verifyForgotPw()">Verify Identity</button>
+    <div id="fp-result">
+      <label>Your registered password:</label>
+      <span id="fp-pw-show"></span>
+      <input class="modal-input" id="fp-new-pw" placeholder="Enter New Password" type="password"/>
+      <div class="btn-row">
+        <button class="btn-primary" onclick="changeForgotPw()">Change Password</button>
+        <button class="btn-secondary" onclick="closeModal('fp-modal')">Cancel</button>
+      </div>
+    </div>
+    <span class="modal-link" onclick="closeModal('fp-modal')">← Back to Login</span>
+  </div>
+</div>
+
+<!-- ALARM MODAL -->
+<div class="modal-overlay" id="alarm-modal">
+  <div class="modal">
+    <h2>🔔 Mining Alarm</h2>
+    <p class="alarm-info">Set a daily reminder to come back and mine when your session ends.</p>
+    <input class="modal-input" id="alarm-time" type="time"/>
+    <select class="modal-input" id="alarm-label-sel">
+      <option value="mine">⛏️ Time to Mine!</option>
+      <option value="boost">🚀 Boost your earnings!</option>
+      <option value="collect">💰 Collect your rewards!</option>
+    </select>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="saveAlarm()">Set Alarm</button>
+      <button class="btn-secondary" onclick="closeModal('alarm-modal')">Cancel</button>
+    </div>
+    <div id="alarm-status"></div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h2>⚙️ Settings</h2>
+    <div class="toggle-wrap">
+      <span class="toggle-label">🌙 Dark Mode</span>
+      <div class="toggle on" id="dark-toggle" onclick="toggleDark()"></div>
+    </div>
+    <div class="speed-wrap">
+      <div class="speed-label">
+        <span>⚡ Mining Speed</span>
+        <span class="speed-val" id="speed-display">10</span>
+      </div>
+      <input type="range" min="10" max="100" step="10" value="10" id="speed-slider" oninput="updateSpeed(this.value)"/>
+      <div class="speed-info" id="speed-info-text">Speed 10 → 12hr cycle → Earn ₦50 per session</div>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:12px" onclick="closeModal('settings-modal')">Save Settings</button>
+  </div>
+</div>
+
+<!-- EXCHANGE MODAL -->
+<div class="modal-overlay" id="exchange-modal">
+  <div class="modal">
+    <h2>💱 Live Exchange Rates</h2>
+    <div id="exchange-rates-list"></div>
+    <button class="btn-secondary" style="width:100%;margin-top:14px" onclick="closeModal('exchange-modal')">Close</button>
+  </div>
+</div>
+
+<!-- WITHDRAW MODAL -->
+<div class="modal-overlay" id="withdraw-modal">
+  <div class="modal">
+    <h2>💸 Withdraw Funds</h2>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;text-align:center">Minimum: <strong style="color:var(--gold)">₦100,000.00</strong></p>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:12px;text-align:center">Available: <strong id="wd-avail" style="color:var(--green)">₦0.00</strong></p>
+    <input class="modal-input" id="wd-amount" placeholder="Enter amount in ₦" type="number" min="100000"/>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="processWithdraw()">Withdraw</button>
+      <button class="btn-secondary" onclick="closeModal('withdraw-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- BALANCE CARD BOTTOM SHEET -->
+<div id="balance-card-overlay">
+  <div id="balance-card">
+    <div class="bc-handle"></div>
+    <h2>💰 Your Balance</h2>
+    <div class="bal-card-row">
+      <span class="bal-card-label">NGN Balance</span>
+      <span class="bal-card-val" id="bc-ngn">₦0.00</span>
+    </div>
+    <div class="bal-card-row">
+      <span class="bal-card-label">USD Balance</span>
+      <span class="bal-card-val" id="bc-usd">$0.00000</span>
+    </div>
+    <div class="bal-card-row">
+      <span class="bal-card-label">BTC Balance</span>
+      <span class="bal-card-val" id="bc-btc">₿0.00000000</span>
+    </div>
+    <div class="bal-card-row">
+      <span class="bal-card-label">Mining Rate</span>
+      <span class="bal-card-val" id="bc-mining" style="color:var(--magenta2)">0.00000000</span>
+    </div>
+    <button id="withdraw-btn-main" onclick="openWithdraw()">💸 Withdraw</button>
+    <button id="close-bal-btn" onclick="closeBalCard()">Close</button>
+  </div>
+</div>
+
+<!-- WITHDRAW LOADING -->
+<div id="withdraw-loading">
+  <div class="wl-spinner"></div>
+  <div class="wl-text" id="wl-text">Processing withdrawal...</div>
+</div>
+
+<!-- SUCCESS POPUP -->
+<div id="success-popup">
+  <div class="sp-icon" id="sp-icon">✅</div>
+  <h3 id="sp-title">Success!</h3>
+  <p id="sp-msg">Done.</p>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notif"></div>
+
+<!-- MAIN CONTENT -->
+<div id="main">
+
+  <!-- Balance Displays -->
+  <div id="balance-bar">
+    <div class="bal-item">
+      <div class="bal-label">Mining</div>
+      <div class="bal-value" id="disp-mining">0.00000000</div>
+    </div>
+    <div class="bal-item">
+      <div class="bal-label">BTC</div>
+      <div class="bal-value" id="disp-btc">₿0.00000000</div>
+    </div>
+    <div class="bal-item">
+      <div class="bal-label">USD</div>
+      <div class="bal-value" id="disp-usd">$0.00000</div>
+    </div>
+    <div class="bal-item">
+      <div class="bal-label">NGN</div>
+      <div class="bal-value" id="disp-ngn">₦0.00</div>
+    </div>
+  </div>
+
+  <!-- Mining Section (shown only on Earn tab) -->
+  <div id="earn-section">
+    <div id="mining-area">
+      <div id="particle-zone"></div>
+      <div id="mining-img-wrap" onclick="handleMineClick()">
+        <img id="mining-img" src="image1.png" alt="Mine Here"
+          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%2290%22 fill=%22%23c0007a%22 opacity=%22.9%22/%3E%3Ctext x=%2250%25%22 y=%2248%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2260%22%3E%E2%9B%8F%EF%B8%8F%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23ffd700%22 font-weight=%22bold%22 font-family=%22sans-serif%22%3EMINE%3C/text%3E%3C/svg%3E'"/>
+      </div>
+      <div id="mine-label">TAP TO START MINING</div>
+      <div id="mine-status"></div>
+    </div>
+
+    <div id="charge-wrap">
+      <div id="charge-meta">
+        <span>⚡ Mining Progress</span>
+        <span id="charge-time-left"></span>
+      </div>
+      <div id="charge-track">
+        <div id="charge-fill"></div>
+      </div>
+      <div id="charge-pct">0%</div>
+    </div>
+
+    <div id="mine-counter">
+      <div id="mine-count-val">0.00000000</div>
+      <div id="mine-count-label">SESSION MINING RATE</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div id="tabs-bar">
+    <button class="tab-btn" onclick="switchTab('ref')">📣 Ref</button>
+    <button class="tab-btn active" onclick="switchTab('earn')">⛏️ Earn</button>
+    <button class="tab-btn" onclick="switchTab('swap')">🔄 Swap</button>
+  </div>
+
+  <div id="tab-content">
+
+    <!-- EARN TAB -->
+    <div id="tab-earn">
+      <div class="section-title">Mining Station</div>
+      <div class="earn-info-card">
+        <p>
+          🟢 Tap the image above to start mining<br/>
+          ⏱️ Default: 12hr session (Speed 10)<br/>
+          💰 Earn ₦50 per 12hr · ₦100 per 24hr<br/>
+          📈 Rewards auto-added to your NGN balance<br/>
+          🔔 Set an alarm so you never miss a session
+        </p>
+      </div>
+    </div>
+
+    <!-- REF TAB -->
+    <div id="tab-ref" style="display:none">
+      <div class="section-title">Your Referral Code</div>
+      <div class="ref-card">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:6px">Share your code — earn ₦50 per referral!</div>
+        <div class="ref-code-box">
+          <span class="ref-code" id="ref-code-display">----</span>
+          <button class="ref-copy-btn" onclick="copyRef()">COPY</button>
+        </div>
+      </div>
+      <div class="ref-card">
+        <div class="section-title" style="font-size:10px;margin-bottom:8px">Redeem a Code</div>
+        <input id="ref-redeem-input" class="modal-input" placeholder="Enter referral code" maxlength="10" style="background:#0d0008;margin-bottom:10px"/>
+        <button class="btn-full" onclick="redeemRef()">🎁 Redeem Code (+₦50 to referrer)</button>
+        <button class="btn-share" onclick="shareWhatsApp()">📲 Share on WhatsApp</button>
+      </div>
+    </div>
+
+    <!-- SWAP TAB -->
+    <div id="tab-swap" style="display:none">
+      <div class="section-title">Crypto Market</div>
+      <div id="swap-coins"></div>
+      <button id="download-apk" onclick="downloadApk()">📲 Download BTCBlastVault App</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+//  STATE
+// ═══════════════════════════════
+var state = {
+  user: null,
+  accounts: [],
+  miningActive: false,
+  miningStart: null,
+  miningSpeed: 10,
+  miningSessionEarned: 0,
+  sessionMiningCount: 0,
+  balanceMining: 0,
+  balanceBTC: 0,
+  balanceUSD: 0,
+  balanceNGN: 0,
+  darkMode: true,
+  alarmTime: null,
+  alarmLabel: 'mine',
+  currentImg: 1,
+  redeemedCodes: []
+};
+
+// Exchange rates
+var RATES = {
+  BTC_NGN: 96000000,
+  BTC_USD: 62000,
+  USD_NGN: 1550,
+  BNB_NGN: 580000,
+  ETH_NGN: 4800000,
+  SOL_NGN: 145000,
+  USDT_NGN: 1550
+};
+var liveRates = Object.assign({}, RATES);
+var prevRates = Object.assign({}, RATES);
+
+function save(){try{localStorage.setItem('bbv2',JSON.stringify(state));}catch(e){}}
+function load(){
+  try{
+    var d=localStorage.getItem('bbv2');
+    if(d){var p=JSON.parse(d);Object.keys(p).forEach(function(k){state[k]=p[k];});}
+  }catch(e){}
+}
+
+// ═══════════════════════════════
+//  BOOT
+// ═══════════════════════════════
+document.addEventListener('DOMContentLoaded', function(){
+  load();
+  applyDarkMode();
+  updateAllDisplays();
+  startImgRotation();
+  startExchangeSim();
+  renderSwapCoins();
+  updateRefCode();
+  checkMiningResume();
+  updateMenuUser();
+  document.getElementById('speed-slider').value = state.miningSpeed;
+  document.getElementById('speed-display').textContent = state.miningSpeed;
+  updateSpeedInfo(state.miningSpeed);
+  startAlarmCheck();
+});
+
+// ═══════════════════════════════
+//  MENU
+// ═══════════════════════════════
+function openMenu(){
+  document.getElementById('menu-overlay').classList.add('open');
+  document.getElementById('menu-panel').classList.add('open');
+}
+function closeMenu(){
+  document.getElementById('menu-overlay').classList.remove('open');
+  document.getElementById('menu-panel').classList.remove('open');
+}
+function updateMenuUser(){
+  var el = document.getElementById('menu-user-info');
+  if(state.user){
+    el.style.display='block';
+    document.getElementById('menu-username-label').textContent = state.user.username;
+  }else{
+    el.style.display='none';
+  }
+}
+
+// ═══════════════════════════════
+//  MODALS
+// ═══════════════════════════════
+function openModal(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='exchange-modal') renderExchangeRates();
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ═══════════════════════════════
+//  CREATE ACCOUNT
+// ═══════════════════════════════
+function submitCreateAccount(){
+  var u=gv('ca-username').trim(), ph=gv('ca-phone').trim(),
+      pw=gv('ca-password').trim(), em=gv('ca-email').trim(), pt=gv('ca-pet').trim();
+  if(!u||!ph||!pw||!em||!pt){showNotif('Please fill all fields','error');return;}
+  if(state.accounts.some(function(a){return a.email===em;})){showNotif('Email already registered','error');return;}
+  if(state.accounts.some(function(a){return a.username===u;})){showNotif('Username already taken','error');return;}
+  var acc={username:u,phone:ph,password:pw,email:em,pet:pt,
+    refCode:u.slice(0,4).toUpperCase().replace(/[^A-Z0-9]/g,'X'),
+    refEarnings:0};
+  state.accounts.push(acc);
+  state.user=acc;
+  save();
+  closeModal('create-modal');
+  ['ca-username','ca-phone','ca-password','ca-email','ca-pet'].forEach(function(id){document.getElementById(id).value='';});
+  showSuccess('✅','Account Created!','Welcome to BitcoinBlastVault, '+u+'!');
+  updateMenuUser();
+  updateRefCode();
+}
+
+// ═══════════════════════════════
+//  LOGIN
+// ═══════════════════════════════
+function submitLogin(){
+  var em=gv('li-email').trim(), pw=gv('li-password').trim();
+  if(!em||!pw){showNotif('Please enter email and password','error');return;}
+  var acc=null;
+  state.accounts.forEach(function(a){if(a.email===em&&a.password===pw)acc=a;});
+  if(!acc){showNotif('Incorrect email or password','error');return;}
+  state.user=acc;
+  save();
+  closeModal('login-modal');
+  document.getElementById('li-email').value='';
+  document.getElementById('li-password').value='';
+  showNotif('Welcome back, '+acc.username+'! 🎉');
+  updateMenuUser();
+  updateRefCode();
+}
+
+// ═══════════════════════════════
+//  FORGOT PASSWORD
+// ═══════════════════════════════
+function verifyForgotPw(){
+  var u=gv('fp-username').trim(), pt=gv('fp-pet').trim();
+  var acc=null;
+  state.accounts.forEach(function(a){
+    if(a.username===u&&a.pet.toLowerCase()===pt.toLowerCase())acc=a;
+  });
+  if(!acc){showNotif('Username or pet name is incorrect','error');return;}
+  document.getElementById('fp-pw-show').textContent=acc.password;
+  document.getElementById('fp-result').style.display='block';
+  document.getElementById('fp-new-pw').dataset.em=acc.email;
+}
+function changeForgotPw(){
+  var np=gv('fp-new-pw').trim();
+  var em=document.getElementById('fp-new-pw').dataset.em;
+  if(!np){showNotif('Please enter a new password','error');return;}
+  state.accounts.forEach(function(a){
+    if(a.email===em){
+      a.password=np;
+      if(state.user&&state.user.email===em)state.user.password=np;
+    }
+  });
+  save();
+  document.getElementById('fp-result').style.display='none';
+  closeModal('fp-modal');
+  showSuccess('🔑','Password Changed!','Your password has been updated.');
+}
+
+// ═══════════════════════════════
+//  ALARM
+// ═══════════════════════════════
+function saveAlarm(){
+  var t=gv('alarm-time'), l=gv('alarm-label-sel');
+  if(!t){showNotif('Please pick a time','error');return;}
+  state.alarmTime=t; state.alarmLabel=l; save();
+  document.getElementById('alarm-status').textContent='✅ Alarm set for '+t;
+  showNotif('Alarm set for '+t+' ⏰');
+}
+function startAlarmCheck(){
+  if(!state.alarmTime) return;
+  setInterval(function(){
+    var now=new Date();
+    var hm=pad(now.getHours())+':'+pad(now.getMinutes());
+    if(hm===state.alarmTime && now.getSeconds()<4){
+      var msgs={mine:'⛏️ Time to Mine!',boost:'🚀 Boost your earnings!',collect:'💰 Collect your rewards!'};
+      showNotif(msgs[state.alarmLabel]||'⛏️ Time to Mine!');
+    }
+  },1000);
+}
+function pad(n){return n<10?'0'+n:n;}
+
+// ═══════════════════════════════
+//  SETTINGS
+// ═══════════════════════════════
+function toggleDark(){
+  state.darkMode=!state.darkMode;
+  applyDarkMode(); save();
+}
+function applyDarkMode(){
+  var tog=document.getElementById('dark-toggle');
+  if(state.darkMode){
+    document.body.classList.remove('light-mode');
+    if(tog)tog.classList.add('on');
+  }else{
+    document.body.classList.add('light-mode');
+    if(tog)tog.classList.remove('on');
+  }
+}
+function updateSpeed(v){
+  state.miningSpeed=parseInt(v);
+  document.getElementById('speed-display').textContent=v;
+  updateSpeedInfo(state.miningSpeed);
+  save();
+}
+function updateSpeedInfo(s){
+  var el=document.getElementById('speed-info-text');
+  if(!el)return;
+  var hrs=getCycleDurationHrs(s);
+  var earn=getSessionEarningNGN(s);
+  el.textContent='Speed '+s+' → '+hrs.toFixed(0)+'hr cycle → Earn ₦'+earn.toFixed(0)+' per session';
+}
+function getCycleDurationHrs(s){
+  s=s||state.miningSpeed;
+  return 12+((s-10)/90)*12;
+}
+function getCycleDurationMs(){
+  return getCycleDurationHrs(state.miningSpeed)*3600*1000;
+}
+function getSessionEarningNGN(s){
+  s=s||state.miningSpeed;
+  return 50+((s-10)/90)*50;
+}
+
+// ═══════════════════════════════
+//  EXCHANGE
+// ═══════════════════════════════
+function startExchangeSim(){
+  setInterval(function(){
+    Object.keys(liveRates).forEach(function(k){
+      liveRates[k]=liveRates[k]*(1+(Math.random()-.5)*0.004);
+    });
+    updateSwapCoins();
+  },3000);
+}
+function renderExchangeRates(){
+  var pairs=[
+    {label:'USDT → NGN',key:'USDT_NGN',icon:'💵'},
+    {label:'BTC → NGN',key:'BTC_NGN',icon:'₿'},
+    {label:'BTC → USD',key:'BTC_USD',icon:'₿'},
+    {label:'BNB → NGN',key:'BNB_NGN',icon:'🟡'},
+    {label:'ETH → NGN',key:'ETH_NGN',icon:'💎'},
+    {label:'SOL → NGN',key:'SOL_NGN',icon:'🌐'}
+  ];
+  document.getElementById('exchange-rates-list').innerHTML=pairs.map(function(p){
+    return '<div class="exc-row"><span class="exc-coin">'+p.icon+' '+p.label+'</span><span class="exc-rate">'+fmtRate(p.key)+'</span></div>';
+  }).join('');
+}
+function fmtRate(key){
+  var v=liveRates[key];
+  if(key.includes('NGN'))return '₦'+Math.round(v).toLocaleString();
+  return '$'+Math.round(v).toLocaleString();
+}
+
+// ═══════════════════════════════
+//  SWAP
+// ═══════════════════════════════
+var COINS=[
+  {name:'Bitcoin',sym:'BTC',icon:'₿',key:'BTC_NGN'},
+  {name:'Ethereum',sym:'ETH',icon:'💎',key:'ETH_NGN'},
+  {name:'BNB',sym:'BNB',icon:'🟡',key:'BNB_NGN'},
+  {name:'Solana',sym:'SOL',icon:'🌐',key:'SOL_NGN'},
+  {name:'Tether',sym:'USDT',icon:'💵',key:'USDT_NGN'}
+];
+function renderSwapCoins(){
+  var el=document.getElementById('swap-coins');
+  el.innerHTML=COINS.map(function(c){
+    return '<div class="coin-row">'+
+      '<div class="coin-icon">'+c.icon+'</div>'+
+      '<div class="coin-info"><div class="coin-name">'+c.name+'</div><div class="coin-sub">'+c.sym+'</div></div>'+
+      '<div class="coin-price">'+
+        '<div class="coin-val" id="swap-'+c.sym+'">₦'+Math.round(liveRates[c.key]).toLocaleString()+'</div>'+
+        '<div class="coin-change up" id="swap-chg-'+c.sym+'">+0.00%</div>'+
+      '</div></div>';
+  }).join('');
+}
+function updateSwapCoins(){
+  COINS.forEach(function(c){
+    var el=document.getElementById('swap-'+c.sym);
+    var chg=document.getElementById('swap-chg-'+c.sym);
+    if(!el)return;
+    var now=liveRates[c.key], prev=prevRates[c.key]||now;
+    var pct=(now-prev)/prev*100;
+    el.textContent='₦'+Math.round(now).toLocaleString();
+    chg.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
+    chg.className='coin-change '+(pct>=0?'up':'down');
+    prevRates[c.key]=now;
+  });
+}
+function downloadApk(){
+  showNotif('📲 Starting download...');
+  var a=document.createElement('a');
+  a.href='BTCblastvault.apk'; a.download='BTCblastvault.apk'; a.click();
+}
+
+// ═══════════════════════════════
+//  IMAGE ROTATION
+// ═══════════════════════════════
+var imgTimer=null;
+function startImgRotation(){
+  if(imgTimer)clearInterval(imgTimer);
+  imgTimer=setInterval(function(){
+    state.currentImg=state.currentImg>=20?1:state.currentImg+1;
+    var img=document.getElementById('mining-img');
+    img.style.opacity='0';
+    setTimeout(function(){
+      img.src='image'+state.currentImg+'.png';
+      img.style.opacity='1';
+    },500);
+  },10000);
+}
+
+// ═══════════════════════════════
+//  MINING
+// ═══════════════════════════════
+function handleMineClick(){
+  if(!state.user){
+    openModal('create-modal');
+    showNotif('Create an account to start mining! ⛏️');
+    return;
+  }
+  if(state.miningActive){
+    showNotif('Mining in progress! ⏱️ Check back later');
+    return;
+  }
+  startMining();
+}
+function startMining(){
+  state.miningActive=true;
+  state.miningStart=Date.now();
+  state.miningSessionEarned=0;
+  state.sessionMiningCount=0;
+  save();
+  document.getElementById('mining-img-wrap').classList.add('mining');
+  document.getElementById('mine-label').textContent='⛏️ MINING IN PROGRESS...';
+  document.getElementById('mine-status').textContent='Session started!';
+  var hrs=getCycleDurationHrs().toFixed(0);
+  showNotif('⛏️ Mining started! Come back in '+hrs+' hours');
+  runMiningLoop();
+}
+function checkMiningResume(){
+  if(state.miningActive&&state.miningStart){
+    var elapsed=Date.now()-state.miningStart;
+    if(elapsed>=getCycleDurationMs()){
+      completeMining();
+    }else{
+      document.getElementById('mining-img-wrap').classList.add('mining');
+      document.getElementById('mine-label').textContent='⛏️ MINING IN PROGRESS...';
+      runMiningLoop();
+    }
+  }
+}
+var mineLoop=null;
+function runMiningLoop(){
+  if(mineLoop)clearInterval(mineLoop);
+  mineLoop=setInterval(function(){
+    if(!state.miningActive){clearInterval(mineLoop);return;}
+    var elapsed=Date.now()-state.miningStart;
+    var cycle=getCycleDurationMs();
+    var pct=Math.min(elapsed/cycle,1);
+    var targetNGN=getSessionEarningNGN();
+    var targetBTC=targetNGN/liveRates.BTC_NGN;
+    var targetUSD=targetNGN/liveRates.USD_NGN;
+
+    // Fast mining counter (visible, fast)
+    state.sessionMiningCount+=0.000000025;
+    state.balanceMining=parseFloat((state.sessionMiningCount).toFixed(8));
+
+    // Slow BTC (meets target at session end)
+    state.balanceBTC=parseFloat((targetBTC*pct).toFixed(8));
+
+    // USD
+    state.balanceUSD=parseFloat((targetUSD*pct).toFixed(5));
+
+    // NGN earned so far
+    state.miningSessionEarned=parseFloat((targetNGN*pct).toFixed(2));
+
+    updateAllDisplays();
+
+    // Charge bar
+    var cfill=document.getElementById('charge-fill');
+    if(cfill)cfill.style.width=(pct*100).toFixed(1)+'%';
+    var cpct=document.getElementById('charge-pct');
+    if(cpct)cpct.textContent=Math.floor(pct*100)+'%';
+    var ctl=document.getElementById('charge-time-left');
+    if(ctl)ctl.textContent=fmtMs(Math.max(cycle-elapsed,0))+' left';
+
+    // Particles
+    if(Math.random()<0.15)spawnParticle();
+
+    if(pct>=1)completeMining();
+    save();
+  },300);
+}
+function completeMining(){
+  clearInterval(mineLoop);
+  state.miningActive=false;
+  var earned=getSessionEarningNGN();
+  state.balanceNGN=parseFloat((state.balanceNGN+earned).toFixed(2));
+  state.miningStart=null;
+  state.miningSessionEarned=0;
+  save();
+  document.getElementById('mining-img-wrap').classList.remove('mining');
+  document.getElementById('mine-label').textContent='TAP TO MINE AGAIN';
+  document.getElementById('mine-status').textContent='✅ Session complete!';
+  var cfill=document.getElementById('charge-fill');
+  if(cfill)cfill.style.width='100%';
+  var cpct=document.getElementById('charge-pct');
+  if(cpct)cpct.textContent='100%';
+  var ctl=document.getElementById('charge-time-left');
+  if(ctl)ctl.textContent='Done!';
+  showSuccess('💰','Mining Complete!','You earned ₦'+earned.toFixed(2)+'! Tap to mine again.');
+  updateAllDisplays();
+}
+function fmtMs(ms){
+  var h=Math.floor(ms/3600000);
+  var m=Math.floor((ms%3600000)/60000);
+  var s=Math.floor((ms%60000)/1000);
+  return h+'h '+m+'m '+s+'s';
+}
+
+// ═══════════════════════════════
+//  PARTICLES
+// ═══════════════════════════════
+var pVals=['+1','+2','+3','+5','+10','+20','+30','+50','+70','+90'];
+function spawnParticle(){
+  var zone=document.getElementById('particle-zone');
+  var el=document.createElement('div');
+  el.className='particle';
+  el.textContent=pVals[Math.floor(Math.random()*pVals.length)];
+  el.style.left=(15+Math.random()*170)+'px';
+  el.style.top=(50+Math.random()*130)+'px';
+  zone.appendChild(el);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},1800);
+}
+
+// ═══════════════════════════════
+//  DISPLAYS
+// ═══════════════════════════════
+function updateAllDisplays(){
+  var ngn=(state.balanceNGN+(state.miningSessionEarned||0));
+  var fmt=function(v,pre,dec){return (pre||'')+(+v).toFixed(dec||2);};
+  setText('disp-mining',state.balanceMining.toFixed(8));
+  setText('disp-btc','₿'+state.balanceBTC.toFixed(8));
+  setText('disp-usd','$'+state.balanceUSD.toFixed(5));
+  setText('disp-ngn','₦'+ngn.toFixed(2));
+  setText('bal-ngn-display','₦'+ngn.toFixed(2));
+  setText('mine-count-val',state.balanceMining.toFixed(8));
+  setText('bc-ngn','₦'+ngn.toFixed(2));
+  setText('bc-usd','$'+state.balanceUSD.toFixed(5));
+  setText('bc-btc','₿'+state.balanceBTC.toFixed(8));
+  setText('bc-mining',state.balanceMining.toFixed(8));
+}
+function setText(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+
+// ═══════════════════════════════
+//  BALANCE CARD
+// ═══════════════════════════════
+function openBalCard(){
+  updateAllDisplays();
+  document.getElementById('balance-card-overlay').classList.add('open');
+}
+function closeBalCard(){
+  document.getElementById('balance-card-overlay').classList.remove('open');
+}
+document.getElementById('balance-card-overlay').addEventListener('click',function(e){
+  if(e.target===this)closeBalCard();
+});
+
+// ═══════════════════════════════
+//  WITHDRAW
+// ═══════════════════════════════
+function openWithdraw(){
+  closeBalCard();
+  if(!state.user){showNotif('Please login first','error');return;}
+  var ngn=state.balanceNGN+(state.miningSessionEarned||0);
+  if(ngn<100000){
+    showNotif('❌ Minimum withdrawal is ₦100,000. Keep mining!','error');
+    return;
+  }
+  var avEl=document.getElementById('wd-avail');
+  if(avEl)avEl.textContent='₦'+ngn.toFixed(2);
+  openModal('withdraw-modal');
+}
+function processWithdraw(){
+  var amt=parseFloat(document.getElementById('wd-amount').value);
+  if(!amt||isNaN(amt)||amt<=0){showNotif('Enter a valid amount','error');return;}
+  var ngn=state.balanceNGN+(state.miningSessionEarned||0);
+  if(amt<100000){showNotif('❌ Minimum withdrawal is ₦100,000','error');return;}
+  if(amt>ngn){showNotif('❌ Insufficient balance','error');return;}
+  closeModal('withdraw-modal');
+  var wl=document.getElementById('withdraw-loading');
+  wl.classList.add('show');
+  setText('wl-text','Processing withdrawal...');
+  setTimeout(function(){setText('wl-text','Verifying transaction...');},800);
+  setTimeout(function(){setText('wl-text','Almost done...');},1600);
+  setTimeout(function(){
+    wl.classList.remove('show');
+    state.balanceNGN=Math.max(0,ngn-amt);
+    state.miningSessionEarned=0;
+    if(state.balanceNGN===0){
+      state.balanceBTC=0;state.balanceUSD=0;
+      state.balanceMining=0;state.sessionMiningCount=0;
+    }
+    save();
+    updateAllDisplays();
+    var code=genCode();
+    var msg=encodeURIComponent(
+      'Hello! I have successfully withdrawn from BitcoinBlastVault 💰\n\n'+
+      'Amount: ₦'+amt.toLocaleString('en',{minimumFractionDigits:2})+'\n'+
+      'Withdraw Code: '+code+'\n'+
+      'Username: '+(state.user?state.user.username:'User')+'\n\n'+
+      'Please process my withdrawal. Thank you! ⛏️'
+    );
+    showSuccess('💸','Withdrawal Submitted!','Your code: '+code+'\nRedirecting to WhatsApp...');
+    setTimeout(function(){window.open('https://wa.me/17404061406?text='+msg,'_blank');},1500);
+  },2000);
+}
+function genCode(){
+  var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code='BBV-';
+  for(var i=0;i<8;i++)code+=c[Math.floor(Math.random()*c.length)];
+  return code;
+}
+
+// ═══════════════════════════════
+//  REFERRALS
+// ═══════════════════════════════
+function updateRefCode(){
+  var el=document.getElementById('ref-code-display');
+  if(!el)return;
+  if(state.user){
+    el.textContent=state.user.refCode||state.user.username.slice(0,4).toUpperCase();
+  }else{
+    el.textContent='----';
+  }
+}
+function copyRef(){
+  if(!state.user){showNotif('Login to get your referral code','error');return;}
+  var code=state.user.refCode||state.user.username.slice(0,4).toUpperCase();
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(code).then(function(){showNotif('✅ Referral code copied!');}).catch(function(){showNotif('Your code: '+code);});
+  }else{showNotif('Your code: '+code);}
+}
+function redeemRef(){
+  if(!state.user){showNotif('Please login first','error');return;}
+  var code=document.getElementById('ref-redeem-input').value.trim().toUpperCase();
+  if(!code){showNotif('Enter a referral code','error');return;}
+  var myCode=state.user.refCode||state.user.username.slice(0,4).toUpperCase();
+  if(code===myCode){showNotif('❌ You cannot redeem your own code','error');return;}
+  if(state.redeemedCodes.indexOf(code)!==-1){showNotif('❌ You already redeemed this code','error');return;}
+  var owner=null;
+  state.accounts.forEach(function(a){
+    if((a.refCode||a.username.slice(0,4).toUpperCase())===code)owner=a;
+  });
+  state.redeemedCodes.push(code);
+  if(owner){owner.refEarnings=(owner.refEarnings||0)+50;}
+  state.balanceNGN=parseFloat((state.balanceNGN+10).toFixed(2));
+  save();
+  document.getElementById('ref-redeem-input').value='';
+  showSuccess('🎁','Code Redeemed!','₦50 credited to referrer! You earned ₦10 bonus!');
+  updateAllDisplays();
+}
+function shareWhatsApp(){
+  var msg=encodeURIComponent('I thought it was fake, but I actually got ₦100,000! From mining ⛏️!\nhttps://igiyg.buzz/sdGHSWG/ng-en?0505200053146857624&s=wa&');
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+// ═══════════════════════════════
+//  TABS
+// ═══════════════════════════════
+function switchTab(tab){
+  var tabs=['ref','earn','swap'];
+  tabs.forEach(function(t){
+    var el=document.getElementById('tab-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+  });
+  var earnSec=document.getElementById('earn-section');
+  if(earnSec)earnSec.style.display=tab==='earn'?'block':'none';
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){
+    b.classList.toggle('active',tabs[i]===tab);
+  });
+  if(tab==='swap')updateSwapCoins();
+}
+
+// ═══════════════════════════════
+//  NOTIFICATIONS
+// ═══════════════════════════════
+var notifTimer=null;
+function showNotif(msg,type){
+  var el=document.getElementById('notif');
+  el.textContent=msg;
+  el.className='';
+  if(type==='error')el.classList.add('error');
+  el.classList.add('show');
+  if(notifTimer)clearTimeout(notifTimer);
+  notifTimer=setTimeout(function(){el.classList.remove('show');},3500);
+}
+var spTimer=null;
+function showSuccess(icon,title,msg){
+  setText('sp-icon',icon);
+  setText('sp-title',title);
+  setText('sp-msg',msg);
+  document.getElementById('success-popup').classList.add('show');
+  if(spTimer)clearTimeout(spTimer);
+  spTimer=setTimeout(function(){document.getElementById('success-popup').classList.remove('show');},4500);
+}
+
+// ═══════════════════════════════
+//  UTILS
+// ═══════════════════════════════
+function gv(id){var el=document.getElementById(id);return el?el.value:'';}
+</script>
+</body>
+</html>
