@@ -6,65 +6,58 @@
 <title>BitcoinBlastVault</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 
-<!-- ═══════════════════════════════════════════════════
-     🔥 FIREBASE SDK v10 — MODULAR (CORRECT VERSION)
-     ═══════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════
+     🔥 FIREBASE SDK — REPLACE CONFIG BELOW WITH YOUR OWN
+     Get config from: Firebase Console → Project Settings → Your Apps
+     ═══════════════════════════════════════════════════════ -->
 <script type="module">
-  import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc, updateDoc,
-           collection, query, where, limit, getDocs }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  // ════════════════════════════════════════
-  // 🔥 YOUR FIREBASE CONFIG
-  // ════════════════════════════════════════
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-analytics.js";
+// 🔥 REPLACE THIS ENTIRE BLOCK WITH YOUR FIREBASE CONFIG
   const firebaseConfig = {
-    apiKey:            "AIzaSyDuFxb3Kc2kKkap1XBc0B3NFxcQUtH6PNU",
-    authDomain:        "bitcoinblastvautlt.firebaseapp.com",
-    projectId:         "bitcoinblastvautlt",
-    storageBucket:     "bitcoinblastvautlt.firebasestorage.app",
+    apiKey: "AIzaSyDuFxb3Kc2kKkap1XBc0B3NFxcQUtH6PNU",
+    authDomain: "bitcoinblastvautlt.firebaseapp.com",
+    projectId: "bitcoinblastvautlt",
+    storageBucket: "bitcoinblastvautlt.firebasestorage.app",
     messagingSenderId: "253105828049",
-    appId:             "1:253105828049:web:4ea25bd94b7c2f3afb95f0"
+    appId: "1:253105828049:web:4ea25bd94b7c2f3afb95f0",
+    measurementId: "G-M3E4KJM7WW"
   };
-  // ════════════════════════════════════════
 
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
-
-  // ── Expose everything globally so the main <script> can use it ──
-  window._db          = db;
-  window._fbDoc       = doc;
-  window._fbSetDoc    = setDoc;
-  window._fbGetDoc    = getDoc;
-  window._fbUpdateDoc = updateDoc;
-  window._fbCollection= collection;
-  window._fbQuery     = query;
-  window._fbWhere     = where;
-  window._fbLimit     = limit;
-  window._fbGetDocs   = getDocs;
-  window._FB          = true;   // ← single flag, visible everywhere
-
-  // Signal that Firebase is ready
-  document.dispatchEvent(new Event('firebase-ready'));
+  const analytics = getAnalytics(app);
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+var FB_ENABLED = false; // set false to use localStorage only during dev
 </script>
 
 <style>
-/* ═══════════════════════════════════
-   DESIGN TOKENS
-═══════════════════════════════════ */
+/* ═══════════════════ DESIGN TOKENS ═══════════════════ */
 :root{
-  --bg:#0a0008;--magenta:#c0007a;--magenta2:#ff00aa;
-  --gold:#ffd700;--gold2:#ffaa00;--green:#00ff88;--red:#ff3355;
-  --cyan:#00e5ff;--purple:#aa00ff;
-  --card:#1a0012;--card2:#220018;--border:#3d0028;
-  --text:#fff;--text2:#cc99bb;
-  --glow:0 0 20px #c0007a88;--glow2:0 0 40px #ffd70066;
+  --bg:#0a0008;
+  --magenta:#c0007a;
+  --magenta2:#ff00aa;
+  --gold:#ffd700;
+  --gold2:#ffaa00;
+  --green:#00ff88;
+  --red:#ff3355;
+  --cyan:#00e5ff;
+  --purple:#aa00ff;
+  --card:#1a0012;
+  --card2:#220018;
+  --border:#3d0028;
+  --text:#fff;
+  --text2:#cc99bb;
+  --glow:0 0 20px #c0007a88;
+  --glow2:0 0 40px #ffd70066;
   --glow-boost:0 0 40px #aa00ff99,0 0 80px #00e5ff44;
 }
 .light-mode{
   --bg:#f8edf5;--card:#fff0f8;--card2:#ffe0f0;
-  --border:#e0a0c8;--text:#1a0012;--text2:#7a3060;--glow:0 0 20px #c0007a44;
+  --border:#e0a0c8;--text:#1a0012;--text2:#7a3060;
+  --glow:0 0 20px #c0007a44;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;min-height:100vh;overflow-x:hidden;}
@@ -74,11 +67,12 @@ body{
   position:relative;transition:background .4s,color .4s;
 }
 body::before{
-  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  content:'';position:fixed;inset:0;
   background:
     radial-gradient(ellipse 80% 60% at 50% 0%,#6b003a44 0%,transparent 70%),
     radial-gradient(ellipse 60% 40% at 20% 100%,#3d002244 0%,transparent 60%),
     radial-gradient(ellipse 50% 50% at 80% 50%,#ff00aa11 0%,transparent 60%);
+  pointer-events:none;z-index:0;
 }
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-track{background:#0a0008;}
@@ -90,7 +84,8 @@ body::before{
   display:flex;align-items:center;justify-content:space-between;
   padding:0 14px;
   background:linear-gradient(180deg,#0d0008f0,#0a000880);
-  backdrop-filter:blur(16px);border-bottom:1px solid var(--border);z-index:1000;
+  backdrop-filter:blur(16px);border-bottom:1px solid var(--border);
+  z-index:1000;
 }
 #hamburger{
   background:none;border:none;cursor:pointer;
@@ -98,21 +93,14 @@ body::before{
   border-radius:8px;transition:background .2s;
 }
 #hamburger:hover{background:#3d002844;}
-#hamburger span{display:block;width:22px;height:2px;background:var(--magenta2);border-radius:2px;}
+#hamburger span{display:block;width:22px;height:2px;background:var(--magenta2);border-radius:2px;transition:all .3s;}
 #logo{
   display:flex;align-items:center;gap:6px;
   font-family:'Orbitron',monospace;font-size:12px;font-weight:900;
   color:var(--gold);text-shadow:0 0 12px #ffd70099;letter-spacing:.5px;
 }
 #logo img{width:20px;height:20px;border-radius:50%;object-fit:cover;}
-#boost-badge{
-  display:none;background:linear-gradient(135deg,var(--purple),var(--cyan));
-  color:#fff;font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;
-  font-family:'Orbitron',monospace;letter-spacing:1px;box-shadow:var(--glow-boost);
-  animation:badgePulse 2s ease-in-out infinite;
-}
-@keyframes badgePulse{0%,100%{opacity:1;}50%{opacity:.6;}}
-#boost-badge.show{display:inline-block;}
+#logo .star{font-size:11px;}
 #bal-btn{
   display:flex;align-items:center;gap:5px;
   background:linear-gradient(135deg,var(--magenta),#6b003a);
@@ -124,6 +112,19 @@ body::before{
 #bal-btn:hover{box-shadow:0 0 30px #c0007acc;transform:scale(1.03);}
 #bal-ngn-display{color:var(--gold);}
 
+/* ── BOOST BADGE in header ── */
+#boost-badge{
+  display:none;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  color:#fff;font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:10px;
+  font-family:'Orbitron',monospace;letter-spacing:1px;
+  box-shadow:var(--glow-boost);
+  animation:badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse{0%,100%{opacity:1;}50%{opacity:.6;}}
+#boost-badge.show{display:inline-block;}
+
 /* ── MENU ── */
 #menu-overlay{position:fixed;inset:0;background:#00000099;z-index:2000;opacity:0;pointer-events:none;transition:opacity .3s;}
 #menu-overlay.open{opacity:1;pointer-events:all;}
@@ -131,7 +132,8 @@ body::before{
   position:fixed;top:0;left:-280px;bottom:0;width:260px;
   background:linear-gradient(180deg,#1e0016,#0a0008);
   border-right:1px solid var(--border);
-  z-index:2001;transition:left .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;
+  z-index:2001;transition:left .35s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
 }
 #menu-panel.open{left:0;}
 #menu-head{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid var(--border);}
@@ -140,9 +142,10 @@ body::before{
 #menu-user-info{padding:14px 20px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);display:none;}
 #menu-user-info strong{color:var(--gold);display:block;font-size:14px;margin-top:2px;}
 #menu-boost-status{
-  margin:8px 20px;padding:10px 14px;border-radius:10px;
+  margin:0 20px 0;padding:10px 14px;border-radius:10px;
   background:linear-gradient(135deg,#1a0030,#000d1a);
-  border:1px solid var(--purple);font-size:12px;color:var(--cyan);display:none;
+  border:1px solid var(--purple);font-size:12px;color:var(--cyan);
+  display:none;margin-bottom:4px;
 }
 .menu-item{
   display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;
@@ -165,10 +168,11 @@ body::before{
   padding:26px 22px;width:100%;max-width:360px;
   box-shadow:0 0 60px #c0007a44,0 20px 60px #00000088;
   transform:translateY(30px) scale(.96);
-  transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:88vh;overflow-y:auto;
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  max-height:88vh;overflow-y:auto;
 }
 .modal-overlay.open .modal{transform:translateY(0) scale(1);}
-.modal h2{font-family:'Orbitron',monospace;font-size:15px;color:var(--gold);margin-bottom:18px;text-align:center;}
+.modal h2{font-family:'Orbitron',monospace;font-size:15px;color:var(--gold);margin-bottom:18px;text-align:center;text-shadow:var(--glow2);}
 .modal-input{
   width:100%;background:#0d0008;border:1px solid var(--border);color:var(--text);
   padding:11px 13px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-size:15px;
@@ -192,40 +196,33 @@ select.modal-input{cursor:pointer;background:#0d0008;color:var(--text);}
 }
 .btn-secondary:hover{border-color:var(--magenta);color:var(--text);}
 .modal-link{color:var(--magenta2);cursor:pointer;font-size:13px;text-decoration:underline;text-align:center;display:block;margin-top:10px;}
+.modal-link:hover{color:var(--gold);}
 
 /* ── BOOST PAYMENT MODAL ── */
 .boost-modal-header{
   text-align:center;padding:16px;
   background:linear-gradient(135deg,#1a0030,#000d1a);
-  border-radius:12px;border:1px solid var(--purple);margin-bottom:16px;
+  border-radius:12px;border:1px solid var(--purple);
+  margin-bottom:16px;
 }
 .boost-modal-header .boost-icon{font-size:36px;margin-bottom:6px;}
 .boost-modal-header h3{font-family:'Orbitron',monospace;font-size:13px;color:var(--cyan);}
 .boost-cost{font-size:22px;font-weight:900;color:var(--gold);font-family:'Orbitron',monospace;}
-.wallet-box{background:#0d0008;border:1px solid var(--gold);border-radius:10px;padding:12px 14px;margin:12px 0;}
+.wallet-box{
+  background:#0d0008;border:1px solid var(--gold);
+  border-radius:10px;padding:12px 14px;margin:12px 0;
+}
 .wallet-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
-.wallet-addr{font-family:'Orbitron',monospace;font-size:11px;color:var(--gold);word-break:break-all;line-height:1.6;}
+.wallet-addr{
+  font-family:'Orbitron',monospace;font-size:11px;color:var(--gold);
+  word-break:break-all;line-height:1.6;
+}
 .screenshot-notice{
   background:linear-gradient(135deg,#0a1a08,#081508);
   border:1px solid var(--green);border-radius:10px;
   padding:12px 14px;margin:12px 0;font-size:13px;color:#aaffcc;line-height:1.7;
 }
 .screenshot-notice strong{color:var(--green);display:block;margin-bottom:4px;}
-
-/* ── BOOST BUTTONS ── */
-.boost-btn-wrap{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;}
-.boost-tier-btn{
-  width:100%;display:flex;align-items:center;justify-content:space-between;
-  padding:14px 16px;border-radius:12px;border:none;cursor:pointer;
-  font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;
-  transition:all .25s;margin-bottom:10px;text-align:left;
-}
-.boost-1000{background:linear-gradient(135deg,#2a0060,#1a0040);color:#cc88ff;border:1px solid #aa00ff44;}
-.boost-1000:hover{background:linear-gradient(135deg,var(--purple),#2a0060);color:#fff;box-shadow:0 0 20px #aa00ff66;}
-.boost-2000{background:linear-gradient(135deg,#003030,#001a20);color:#00cccc;border:1px solid #00e5ff44;}
-.boost-2000:hover{background:linear-gradient(135deg,#006060,#003040);color:#fff;box-shadow:0 0 20px #00e5ff66;}
-.boost-tier-left small{display:block;font-size:11px;opacity:.75;font-weight:400;margin-top:2px;}
-.boost-tier-right{font-family:'Orbitron',monospace;font-size:13px;color:var(--gold);flex-shrink:0;margin-left:10px;}
 
 /* ── BOOST LOADING ── */
 #boost-loading{
@@ -262,29 +259,69 @@ select.modal-input{cursor:pointer;background:#0d0008;color:var(--text);}
 #main{padding-top:68px;padding-bottom:130px;position:relative;z-index:1;min-height:100vh;}
 
 /* ── ADS SLOTS ── */
-#ads-slot-top,#ads-slot-bottom{width:100%;overflow:hidden;display:flex;justify-content:center;padding:0 12px;}
+#ads-slot-top{
+  /* ═══ GOOGLE ADS SLOT 1 ═══ PASTE YOUR AD CODE INSIDE THIS DIV */
+  width:100%;min-height:0;overflow:hidden;
+  display:flex;justify-content:center;
+  padding:0 12px;margin-top:4px;
+}
+#ads-slot-bottom{
+  /* ═══ GOOGLE ADS SLOT 2 ═══ PASTE YOUR AD CODE INSIDE THIS DIV */
+  width:100%;min-height:0;overflow:hidden;
+  display:flex;justify-content:center;
+  padding:0 12px;margin-bottom:4px;
+}
 
 /* ── BALANCE BAR ── */
 #balance-bar{display:flex;justify-content:center;gap:8px;padding:10px 12px 4px;flex-wrap:wrap;}
-.bal-item{text-align:center;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:7px 12px;min-width:80px;flex:1;max-width:110px;}
+.bal-item{
+  text-align:center;background:var(--card);border:1px solid var(--border);
+  border-radius:10px;padding:7px 12px;min-width:80px;flex:1;max-width:110px;
+}
 .bal-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;}
 .bal-value{font-family:'Orbitron',monospace;font-size:11px;color:var(--gold);font-weight:700;margin-top:2px;}
 
 /* ── MINING AREA ── */
 #mining-area{display:flex;flex-direction:column;align-items:center;padding:16px 16px 8px;position:relative;}
-#particle-zone{position:absolute;top:0;left:50%;transform:translateX(-50%);width:260px;height:260px;pointer-events:none;z-index:10;}
-.particle{position:absolute;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--gold);pointer-events:none;animation:particleRise 1.8s ease-out forwards;text-shadow:0 0 8px var(--gold);}
-@keyframes particleRise{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-90px) scale(.5);}}
-.smoke-particle{position:absolute;border-radius:50%;pointer-events:none;animation:smokeRise 2.5s ease-out forwards;filter:blur(4px);}
-@keyframes smokeRise{0%{opacity:.9;transform:translateY(0) scale(1);}50%{opacity:.5;transform:translateY(-50px) scale(2);}100%{opacity:0;transform:translateY(-120px) scale(3);}}
-
-#mining-img-wrap{position:relative;width:180px;height:180px;cursor:pointer;filter:drop-shadow(0 0 20px #c0007a88);transition:filter .3s;}
+#particle-zone{
+  position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:260px;height:260px;pointer-events:none;z-index:10;
+}
+.particle{
+  position:absolute;font-family:'Orbitron',monospace;
+  font-size:11px;font-weight:700;color:var(--gold);
+  pointer-events:none;animation:particleRise 1.8s ease-out forwards;
+  text-shadow:0 0 8px var(--gold);
+}
+@keyframes particleRise{
+  0%{opacity:1;transform:translateY(0) scale(1);}
+  100%{opacity:0;transform:translateY(-90px) scale(.5);}
+}
+/* Coloured smoke for boosted users */
+.smoke-particle{
+  position:absolute;border-radius:50%;
+  pointer-events:none;animation:smokeRise 2.5s ease-out forwards;
+  filter:blur(4px);
+}
+@keyframes smokeRise{
+  0%{opacity:.9;transform:translateY(0) scale(1) rotate(0deg);}
+  50%{opacity:.5;transform:translateY(-50px) scale(2) rotate(20deg);}
+  100%{opacity:0;transform:translateY(-120px) scale(3) rotate(40deg);}
+}
+#mining-img-wrap{
+  position:relative;width:180px;height:180px;cursor:pointer;
+  filter:drop-shadow(0 0 20px #c0007a88);transition:filter .3s;
+}
 #mining-img-wrap:hover{filter:drop-shadow(0 0 40px #c0007acc);}
 #mining-img-wrap.mining{animation:imgPulse 2s ease-in-out infinite;filter:drop-shadow(0 0 30px #ffd70099);}
 #mining-img-wrap.boosted{filter:drop-shadow(0 0 40px #aa00ffcc) drop-shadow(0 0 20px #00e5ff88);}
 #mining-img-wrap.boosted.mining{animation:boostPulse 1.5s ease-in-out infinite;}
 @keyframes imgPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
-@keyframes boostPulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 40px #aa00ffcc);}50%{transform:scale(1.06);filter:drop-shadow(0 0 60px #aa00ffff);}}
+@keyframes boostPulse{
+  0%,100%{transform:scale(1);filter:drop-shadow(0 0 40px #aa00ffcc) drop-shadow(0 0 20px #00e5ff88);}
+  50%{transform:scale(1.06);filter:drop-shadow(0 0 60px #aa00ffff) drop-shadow(0 0 40px #00e5ffaa);}
+}
+/* Boosted ring effect */
 #mining-img-wrap.boosted::before{
   content:'';position:absolute;inset:-10px;border-radius:50%;
   border:2px solid transparent;
@@ -293,18 +330,24 @@ select.modal-input{cursor:pointer;background:#0d0008;color:var(--text);}
   animation:ringRotate 3s linear infinite;
 }
 @keyframes ringRotate{to{transform:rotate(360deg);}}
-#mining-img{width:180px;height:180px;object-fit:contain;border-radius:50%;animation:floatImg 4s ease-in-out infinite;transition:opacity .4s;}
-@keyframes floatImg{0%,100%{transform:translateY(0);}25%{transform:translateY(-8px);}75%{transform:translateY(5px);}}
-
+#mining-img{
+  width:180px;height:180px;object-fit:contain;border-radius:50%;
+  animation:floatImg 4s ease-in-out infinite;transition:opacity .4s;
+}
+@keyframes floatImg{
+  0%,100%{transform:translateY(0px) rotate(0deg);}
+  25%{transform:translateY(-8px) rotate(1deg);}
+  75%{transform:translateY(5px) rotate(-1deg);}
+}
+#mine-label{margin-top:10px;font-size:11px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;}
+#mine-status{font-family:'Orbitron',monospace;font-size:10px;color:var(--magenta2);margin-top:3px;min-height:14px;text-align:center;}
 #boosted-label{
-  display:none;font-family:'Orbitron',monospace;font-size:10px;
-  color:var(--cyan);letter-spacing:2px;text-align:center;
-  margin-top:6px;text-shadow:0 0 10px var(--cyan);
-  animation:badgePulse 2s ease-in-out infinite;
+  display:none;font-family:'Orbitron',monospace;font-size:11px;
+  background:linear-gradient(135deg,var(--purple),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;letter-spacing:2px;margin-top:4px;
 }
 #boosted-label.show{display:block;}
-#mine-label{margin-top:8px;font-size:11px;color:var(--text2);letter-spacing:2px;text-transform:uppercase;}
-#mine-status{font-family:'Orbitron',monospace;font-size:10px;color:var(--magenta2);margin-top:3px;min-height:14px;text-align:center;}
 
 /* ── CHARGE BAR ── */
 #charge-wrap{width:88%;max-width:320px;margin:12px auto 0;}
@@ -316,23 +359,58 @@ select.modal-input{cursor:pointer;background:#0d0008;color:var(--text);}
   border-radius:10px;transition:width .5s linear;
   box-shadow:0 0 10px var(--magenta2);position:relative;overflow:hidden;
 }
-#charge-fill::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,#ffffff44,transparent);animation:sweep 2s infinite;}
-@keyframes sweep{0%{left:-100%;}100%{left:220%;}}
 #charge-fill.boosted-fill{background:linear-gradient(90deg,var(--purple),var(--cyan),var(--magenta2));}
+#charge-fill::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,#ffffff44,transparent);
+  animation:chargeSweep 2s infinite;
+}
+@keyframes chargeSweep{0%{left:-100%;}100%{left:220%;}}
 #charge-pct{text-align:center;font-family:'Orbitron',monospace;font-size:10px;color:var(--magenta2);margin-top:4px;}
 #mine-counter{text-align:center;margin-top:10px;}
 #mine-count-val{font-family:'Orbitron',monospace;font-size:18px;color:var(--magenta2);font-weight:900;text-shadow:0 0 16px var(--magenta2);}
 #mine-count-label{font-size:10px;color:var(--text2);letter-spacing:2px;}
 
 /* ── TABS ── */
-#tabs-bar{display:flex;margin:14px 12px 0;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+#tabs-bar{display:flex;margin:16px 12px 0;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
 .tab-btn{flex:1;padding:11px 4px;background:none;border:none;color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;cursor:pointer;transition:all .25s;letter-spacing:.5px;}
 .tab-btn.active{background:linear-gradient(135deg,var(--magenta),#6b003a);color:#fff;box-shadow:var(--glow);}
 #tab-content{padding:14px 12px;}
 
-/* ── EARN TAB ── */
+/* ── EARN ── */
 .earn-info-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;}
-.earn-info-card p{font-size:13px;color:var(--text2);line-height:2.1;}
+.earn-info-card p{font-size:13px;color:var(--text2);line-height:2;}
+
+/* ── SETTINGS SPEED BOOSTS ── */
+.boost-btn-wrap{margin-top:14px;border-top:1px solid var(--border);padding-top:14px;}
+.boost-tier-btn{
+  width:100%;padding:14px;border-radius:12px;border:none;
+  font-family:'Orbitron',monospace;font-weight:700;font-size:13px;
+  cursor:pointer;transition:all .3s;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;overflow:hidden;
+}
+.boost-tier-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,#ffffff11,transparent);
+  transform:translateX(-100%);transition:transform .4s;
+}
+.boost-tier-btn:hover::after{transform:translateX(100%);}
+.boost-1000{
+  background:linear-gradient(135deg,#2a0050,#000d1a);
+  border:1px solid var(--purple);color:var(--cyan);
+  box-shadow:0 0 20px #aa00ff44;
+}
+.boost-1000:hover{box-shadow:0 0 40px #aa00ff88;}
+.boost-2000{
+  background:linear-gradient(135deg,#001a40,#0a0020);
+  border:1px solid var(--cyan);color:var(--gold);
+  box-shadow:0 0 20px #00e5ff44;
+}
+.boost-2000:hover{box-shadow:0 0 40px #00e5ff88;}
+.boost-tier-left{text-align:left;}
+.boost-tier-left small{display:block;font-size:10px;color:var(--text2);font-family:'Rajdhani',sans-serif;margin-top:2px;}
+.boost-tier-right{font-size:11px;text-align:right;}
 
 /* ── REFERRAL ── */
 .ref-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;}
@@ -342,32 +420,45 @@ select.modal-input{cursor:pointer;background:#0d0008;color:var(--text);}
 .ref-copy-btn:hover{background:var(--magenta2);}
 .btn-full{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,var(--magenta),#6b003a);border:none;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;box-shadow:var(--glow);margin-bottom:10px;}
 .btn-full:hover{box-shadow:0 0 30px #c0007acc;}
-.btn-share{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,#25d366,#128c7e);border:none;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+.btn-share{width:100%;padding:13px;border-radius:10px;background:linear-gradient(135deg,#25d366,#128c7e);border:none;color:#fff;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;cursor:pointer;transition:all .2s;}
+.btn-share:hover{opacity:.9;}
 
 /* ── SWAP ── */
 .coin-row{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;transition:border-color .2s;}
 .coin-row:hover{border-color:var(--magenta);}
 .coin-icon{font-size:22px;min-width:28px;text-align:center;}
-.coin-info{flex:1;}.coin-name{font-weight:700;font-size:14px;}.coin-sub{font-size:11px;color:var(--text2);}
-.coin-price{text-align:right;}.coin-val{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
-.coin-change{font-size:11px;font-weight:700;}.coin-change.up{color:var(--green);}.coin-change.down{color:var(--red);}
+.coin-info{flex:1;}
+.coin-name{font-weight:700;font-size:14px;}
+.coin-sub{font-size:11px;color:var(--text2);}
+.coin-price{text-align:right;}
+.coin-val{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
+.coin-change{font-size:11px;font-weight:700;}
+.coin-change.up{color:var(--green);}
+.coin-change.down{color:var(--red);}
 #download-apk{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;color:#0d0008;font-family:'Orbitron',monospace;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;margin-top:10px;box-shadow:var(--glow2);}
 #download-apk:hover{box-shadow:0 0 40px #ffd70099;transform:translateY(-2px);}
 
 /* ── BALANCE CARD ── */
 #balance-card-overlay{position:fixed;inset:0;background:#00000099;backdrop-filter:blur(4px);z-index:3000;opacity:0;pointer-events:none;transition:opacity .3s;display:flex;align-items:flex-end;justify-content:center;}
 #balance-card-overlay.open{opacity:1;pointer-events:all;}
-#balance-card{background:linear-gradient(145deg,#1e0016,#0d0008);border:1px solid var(--border);border-radius:24px 24px 0 0;padding:24px 20px 34px;width:100%;max-width:480px;transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);box-shadow:0 -20px 60px #c0007a44;}
+#balance-card{
+  background:linear-gradient(145deg,#1e0016,#0d0008);
+  border:1px solid var(--border);border-radius:24px 24px 0 0;
+  padding:24px 20px 34px;width:100%;max-width:480px;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 -20px 60px #c0007a44;
+}
 #balance-card-overlay.open #balance-card{transform:translateY(0);}
 .bc-handle{width:40px;height:4px;background:#3d0028;border-radius:2px;margin:0 auto 20px;}
 #balance-card h2{font-family:'Orbitron',monospace;font-size:14px;color:var(--gold);margin-bottom:14px;text-align:center;}
 .bal-card-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
-.bal-card-label{color:var(--text2);font-size:13px;}.bal-card-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--gold);}
+.bal-card-label{color:var(--text2);font-size:13px;}
+.bal-card-val{font-family:'Orbitron',monospace;font-size:13px;color:var(--gold);}
 #withdraw-btn-main{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--gold2),var(--gold));border:none;color:#0d0008;font-family:'Orbitron',monospace;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;margin-top:18px;box-shadow:var(--glow2);}
 #withdraw-btn-main:hover{transform:translateY(-2px);box-shadow:0 0 40px #ffd70099;}
 #close-bal-btn{width:100%;padding:12px;border-radius:12px;background:#1a0012;border:1px solid var(--border);color:var(--text2);font-family:'Rajdhani',sans-serif;font-weight:600;font-size:14px;cursor:pointer;margin-top:8px;}
 
-/* ── LOADING ── */
+/* ── WITHDRAW LOADING ── */
 #withdraw-loading{position:fixed;inset:0;background:#000000cc;z-index:6000;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 #withdraw-loading.show{opacity:1;pointer-events:all;}
 .wl-spinner{width:60px;height:60px;border-radius:50%;border:4px solid #3d0028;border-top-color:var(--gold);animation:spin 1s linear infinite;margin-bottom:16px;}
@@ -394,13 +485,14 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
 
 /* ── EXCHANGE ── */
 .exc-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
-.exc-coin{font-weight:700;font-size:14px;}.exc-rate{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
+.exc-coin{font-weight:700;font-size:14px;}
+.exc-rate{font-family:'Orbitron',monospace;font-size:12px;color:var(--gold);}
 
 /* ── ALARM ── */
 .alarm-info{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.7;}
 #alarm-status{margin-top:10px;font-size:13px;color:var(--green);text-align:center;}
 
-/* ── MISC ── */
+/* ── SECTION TITLE ── */
 .section-title{font-family:'Orbitron',monospace;font-size:11px;color:var(--magenta2);letter-spacing:2px;margin-bottom:12px;text-transform:uppercase;}
 
 /* ── NOTIFICATION ── */
@@ -411,7 +503,8 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   border:1px solid var(--green);border-radius:10px;
   padding:11px 18px;font-size:13px;color:#aaffcc;
   z-index:7000;transition:transform .4s cubic-bezier(.4,0,.2,1);
-  text-align:center;min-width:220px;max-width:90vw;box-shadow:0 0 30px #00ff8844;
+  text-align:center;min-width:220px;max-width:90vw;
+  box-shadow:0 0 30px #00ff8844;
 }
 #notif.show{transform:translateX(-50%) translateY(8px);}
 #notif.error{background:linear-gradient(135deg,#1a0810,#0d0508);border-color:var(--red);color:#ffaaaa;box-shadow:0 0 30px #ff335544;}
@@ -420,7 +513,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
 </head>
 <body>
 
-<!-- HEADER -->
+<!-- ══ HEADER ══ -->
 <div id="header">
   <button id="hamburger" onclick="openMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
@@ -428,7 +521,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   <div id="logo">
     BitcoinBlastVault
     <img src="icon.png" alt="icon" onerror="this.style.display='none'"/>
-    <span style="font-size:11px">⭐</span>
+    <span class="star"></span>
     <span id="boost-badge">BOOSTED</span>
   </div>
   <button id="bal-btn" onclick="openBalCard()">
@@ -436,7 +529,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   </button>
 </div>
 
-<!-- MENU -->
+<!-- ══ SLIDE MENU ══ -->
 <div id="menu-overlay" onclick="closeMenu()"></div>
 <div id="menu-panel">
   <div id="menu-head">
@@ -453,8 +546,11 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   <div class="menu-item" onclick="closeMenu();openModal('alarm-modal')"><span class="mi">🔔</span> Alarm</div>
   <div class="menu-item" onclick="closeMenu();openModal('settings-modal')"><span class="mi">⚙️</span> Settings</div>
   <div class="menu-item" onclick="closeMenu();openModal('exchange-modal')"><span class="mi">💱</span> Exchange</div>
-  <div class="menu-item" onclick="closeMenu();openWhatsAppSupport()"><span class="mi">✉️</span> Contact Us</div>
+  <div class="menu-item" onclick="openWhatsAppSupport()"><span class="mi">✉️</span> Contact us</div>
+
 </div>
+
+<!-- ══ MODALS ══ -->
 
 <!-- CREATE ACCOUNT -->
 <div class="modal-overlay" id="create-modal">
@@ -510,7 +606,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
 <div class="modal-overlay" id="alarm-modal">
   <div class="modal">
     <h2>🔔 Mining Alarm</h2>
-    <p class="alarm-info">Set a daily reminder so you never miss a mining session.</p>
+    <p class="alarm-info">Set a daily reminder to come back and mine when your session ends.</p>
     <input class="modal-input" id="alarm-time" type="time"/>
     <select class="modal-input" id="alarm-label-sel">
       <option value="mine">⛏️ Time to Mine!</option>
@@ -541,14 +637,21 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
       <input type="range" min="10" max="100" step="10" value="10" id="speed-slider" oninput="updateSpeed(this.value)"/>
       <div class="speed-info" id="speed-info-text">Speed 10 → 12hr cycle → Earn ₦50 per session</div>
     </div>
+    <!-- BOOST BUTTONS -->
     <div class="boost-btn-wrap">
       <div class="section-title" style="margin-bottom:10px">⚡ Power Boost</div>
       <button class="boost-tier-btn boost-1000" onclick="openBoostModal(1000)">
-        <div class="boost-tier-left">🚀 Boost Speed to 1000<small>₦1,000 every 120hrs · 50hrs re-mine</small></div>
+        <div class="boost-tier-left">
+          🚀 Boost Speed to 1000
+          <small>₦1,000 every 120hrs · 50hrs re-mine</small>
+        </div>
         <div class="boost-tier-right">5 USDT</div>
       </button>
       <button class="boost-tier-btn boost-2000" onclick="openBoostModal(2000)">
-        <div class="boost-tier-left">⚡ Boost Speed to 2000<small>₦2,000 every 130hrs · 50hrs re-mine</small></div>
+        <div class="boost-tier-left">
+          ⚡ Boost Speed to 2000
+          <small>₦2,000 every 130hrs · 50hrs re-mine</small>
+        </div>
         <div class="boost-tier-right">10 USDT</div>
       </button>
     </div>
@@ -565,7 +668,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   </div>
 </div>
 
-<!-- BOOST 1000 -->
+<!-- BOOST 1000 PAYMENT MODAL -->
 <div class="modal-overlay" id="boost1000-modal">
   <div class="modal">
     <div class="boost-modal-header">
@@ -575,11 +678,11 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
     </div>
     <div class="wallet-box">
       <div class="wallet-label">Send exactly 5 USDT to this wallet address:</div>
-      <div class="wallet-addr">x765902usp2xt1119</div>
+      <div class="wallet-addr" id="wallet-addr-1000">x765902usp2xt1119</div>
     </div>
     <div class="screenshot-notice">
       <strong>📸 Important — Please Read Carefully:</strong>
-      After completing your payment, kindly take a clear screenshot of your transaction confirmation showing the amount sent, the wallet address, and the transaction ID. This screenshot serves as your proof of payment and is required to activate your Speed 1000 Boost.
+      After completing your payment, kindly take a clear screenshot of your transaction confirmation showing the amount sent, the wallet address, and the transaction ID or reference number. This screenshot serves as your proof of payment and will be required for our team to verify and activate your Speed 1000 Boost promptly.
     </div>
     <div class="btn-row">
       <button class="btn-primary" style="background:linear-gradient(135deg,var(--purple),#2a0050)" onclick="confirmBoostPayment(1000)">✅ Confirm Payment</button>
@@ -588,7 +691,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   </div>
 </div>
 
-<!-- BOOST 2000 -->
+<!-- BOOST 2000 PAYMENT MODAL -->
 <div class="modal-overlay" id="boost2000-modal">
   <div class="modal">
     <div class="boost-modal-header">
@@ -598,11 +701,11 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
     </div>
     <div class="wallet-box">
       <div class="wallet-label">Send exactly 10 USDT to this wallet address:</div>
-      <div class="wallet-addr">x765902usp2xt1119</div>
+      <div class="wallet-addr" id="wallet-addr-2000">x765902usp2xt1119</div>
     </div>
     <div class="screenshot-notice">
       <strong>📸 Important — Please Read Carefully:</strong>
-      After completing your payment, kindly take a clear screenshot of your transaction confirmation showing the amount sent, the wallet address, and the transaction ID. This screenshot serves as your proof of payment and is required to activate your Speed 2000 Boost.
+      After completing your payment, kindly take a clear screenshot of your transaction confirmation showing the amount sent, the wallet address, and the transaction ID or reference number. This screenshot serves as your proof of payment and will be required for our team to verify and activate your Speed 2000 Boost promptly.
     </div>
     <div class="btn-row">
       <button class="btn-primary" style="background:linear-gradient(135deg,var(--cyan),#001a40);color:#000" onclick="confirmBoostPayment(2000)">✅ Confirm Payment</button>
@@ -611,11 +714,11 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   </div>
 </div>
 
-<!-- WITHDRAW -->
+<!-- WITHDRAW MODAL -->
 <div class="modal-overlay" id="withdraw-modal">
   <div class="modal">
     <h2>💸 Withdraw Funds</h2>
-    <p style="font-size:13px;color:var(--text2);margin-bottom:8px;text-align:center">Minimum: <strong style="color:var(--gold)">₦100,000.00</strong></p>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;text-align:center">Minimum: <strong style="color:var(--gold)">₦100,000.00</strong></p>
     <p style="font-size:12px;color:var(--text2);margin-bottom:12px;text-align:center">Available: <strong id="wd-avail" style="color:var(--green)">₦0.00</strong></p>
     <input class="modal-input" id="wd-amount" placeholder="Enter amount in ₦" type="number" min="100000"/>
     <div class="btn-row">
@@ -665,12 +768,11 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
 <!-- NOTIFICATION -->
 <div id="notif"></div>
 
-<!-- MAIN -->
+<!-- ══ MAIN ══ -->
 <div id="main">
 
-  <!-- ADS SLOT 1 -->
+  <!-- ADS SLOT 1 — Top -->
   <div id="ads-slot-top">
-    <!-- PASTE YOUR GOOGLE ADSENSE CODE HERE -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3899764771871192"
      crossorigin="anonymous"></script>
 <!-- homepage Ads -->
@@ -685,6 +787,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
 </script>
   </div>
 
+  <!-- Balance Bar -->
   <div id="balance-bar">
     <div class="bal-item"><div class="bal-label">Mining</div><div class="bal-value" id="disp-mining">0.00000000</div></div>
     <div class="bal-item"><div class="bal-label">BTC</div><div class="bal-value" id="disp-btc">₿0.00000000</div></div>
@@ -692,12 +795,13 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
     <div class="bal-item"><div class="bal-label">NGN</div><div class="bal-value" id="disp-ngn">₦0.00</div></div>
   </div>
 
+  <!-- Mining Section -->
   <div id="earn-section">
     <div id="mining-area">
       <div id="particle-zone"></div>
       <div id="mining-img-wrap" onclick="handleMineClick()">
         <img id="mining-img" src="image1.png" alt="Mine"
-          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%2290%22 fill=%22%23c0007a%22/%3E%3Ctext x=%2250%25%22 y=%2248%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2255%22%3E%E2%9B%8F%EF%B8%8F%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23ffd700%22 font-family=%22monospace%22%3EMINE%3C/text%3E%3C/svg%3E'"/>
+          onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Ccircle cx=%22100%22 cy=%22100%22 r=%2290%22 fill=%22%23c0007a%22/%3E%3Ctext x=%2250%25%22 y=%2248%25%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-size=%2255%22%3E%E2%9B%8F%EF%B8%8F%3C/text%3E%3Ctext x=%2250%25%22 y=%2272%25%22 text-anchor=%22middle%22 font-size=%2218%22 fill=%22%23ffd700%22 font-weight=%22bold%22 font-family=%22monospace%22%3EMINE%3C/text%3E%3C/svg%3E'"/>
       </div>
       <div id="boosted-label">⚡ BOOSTED MODE ACTIVE ⚡</div>
       <div id="mine-label">TAP TO START MINING</div>
@@ -719,9 +823,8 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
     </div>
   </div>
 
-  <!-- ADS SLOT 2 -->
+  <!-- ADS SLOT 2 — Above tabs -->
   <div id="ads-slot-bottom">
-    <!-- PASTE YOUR GOOGLE ADSENSE CODE HERE --> 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3899764771871192"
      crossorigin="anonymous"></script>
 <!-- homepage Ads -->
@@ -736,6 +839,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
 </script>
   </div>
 
+  <!-- TABS -->
   <div id="tabs-bar">
     <button class="tab-btn" onclick="switchTab('ref')">📣 Ref</button>
     <button class="tab-btn active" onclick="switchTab('earn')">⛏️ Earn</button>
@@ -743,6 +847,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   </div>
 
   <div id="tab-content">
+    <!-- EARN -->
     <div id="tab-earn">
       <div class="section-title">Mining Station</div>
       <div class="earn-info-card">
@@ -753,11 +858,12 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
           🚀 Boosted Speed 1000 → ₦1,000 / 120hr<br/>
           ⚡ Boosted Speed 2000 → ₦2,000 / 130hr<br/>
           🔔 Set an alarm so you never miss a session<br/>
-          ☰ Go to menu → Settings to increase Speed
+          ☰ Go to menu, click on settings to increase Speed 
         </p>
       </div>
     </div>
 
+    <!-- REF -->
     <div id="tab-ref" style="display:none">
       <div class="section-title">Your Referral Code</div>
       <div class="ref-card">
@@ -775,6 +881,7 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
       </div>
     </div>
 
+    <!-- SWAP -->
     <div id="tab-swap" style="display:none">
       <div class="section-title">Crypto Market</div>
       <div id="swap-coins"></div>
@@ -783,10 +890,14 @@ input[type=range]{width:100%;accent-color:var(--magenta2);cursor:pointer;height:
   </div>
 </div>
 
+
+<!-- ══════════════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════════════ -->
 <script>
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  STATE
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 var state = {
   user: null,
   miningActive: false,
@@ -803,352 +914,304 @@ var state = {
   alarmLabel: 'mine',
   currentImg: 1,
   redeemedCodes: [],
-  boostLevel: 0,
-  boostExpiry: null,
-  isEnabled: true
+  boostLevel: 0,       // 0 = normal, 1000, 2000
+  boostExpiry: null,   // timestamp ms
+  isEnabled: true,
+  pendingBoostRequest: null
 };
 
 var RATES = {BTC_NGN:96000000,BTC_USD:62000,USD_NGN:1550,BNB_NGN:580000,ETH_NGN:4800000,SOL_NGN:145000,USDT_NGN:1550};
 var liveRates = Object.assign({},RATES);
-var prevRates  = Object.assign({},RATES);
-var WHATSAPP   = '17404061406';
+var prevRates = Object.assign({},RATES);
+var WHATSAPP = '17404061406';
 var BOOST_WALLET = 'x765902usp2xt1119';
 
-// ════════════════════════════════════════════════
-//  FIREBASE HELPERS  (use window._FB / window._db)
-// ════════════════════════════════════════════════
-function emailToUid(email){ return 'u_'+email.toLowerCase().replace(/[^a-z0-9]/g,'_'); }
-
-async function fbSave(uid, data){
-  if(!window._FB || !uid) return;
+// ═══════════════════════════════
+//  FIREBASE HELPERS
+// ═══════════════════════════════
+function fbSaveUser(){
+  if(!FB_ENABLED || !state.user) return;
   try{
-    await window._fbSetDoc(window._fbDoc(window._db,'users',uid), data, {merge:true});
-  }catch(e){ console.warn('fbSave:',e); }
+    db.collection('users').doc(state.user.uid).set(state.user, {merge:true});
+  }catch(e){console.warn('FB save failed',e);}
 }
-
-async function fbLoad(uid){
-  if(!window._FB || !uid) return null;
+function fbSaveState(){
+  if(!FB_ENABLED || !state.user) return lsSave();
+  var data = {
+    miningActive: state.miningActive,
+    miningStart: state.miningStart,
+    miningSpeed: state.miningSpeed,
+    miningSessionEarned: state.miningSessionEarned,
+    sessionMiningCount: state.sessionMiningCount,
+    balanceMining: state.balanceMining,
+    balanceBTC: state.balanceBTC,
+    balanceUSD: state.balanceUSD,
+    balanceNGN: state.balanceNGN,
+    darkMode: state.darkMode,
+    alarmTime: state.alarmTime,
+    alarmLabel: state.alarmLabel,
+    redeemedCodes: state.redeemedCodes,
+    boostLevel: state.boostLevel,
+    boostExpiry: state.boostExpiry,
+    isEnabled: state.isEnabled,
+    lastSeen: Date.now()
+  };
   try{
-    var snap = await window._fbGetDoc(window._fbDoc(window._db,'users',uid));
-    return snap.exists() ? snap.data() : null;
-  }catch(e){ return null; }
+    db.collection('users').doc(state.user.uid).set(data, {merge:true});
+  }catch(e){lsSave();}
 }
-
-async function fbFindByEmail(email){
-  if(!window._FB) return null;
-  try{
-    var q = window._fbQuery(
-      window._fbCollection(window._db,'users'),
-      window._fbWhere('email','==',email.toLowerCase()),
-      window._fbLimit(1)
-    );
-    var snap = await window._fbGetDocs(q);
-    if(snap.empty) return null;
-    return snap.docs[0].data();
-  }catch(e){ return null; }
-}
-
-async function fbFindByUsernameAndPet(username, pet){
-  if(!window._FB) return null;
-  try{
-    var q = window._fbQuery(
-      window._fbCollection(window._db,'users'),
-      window._fbWhere('username','==',username),
-      window._fbLimit(5)
-    );
-    var snap = await window._fbGetDocs(q);
-    var found = null;
-    snap.forEach(function(d){
-      var dd=d.data();
-      if(dd.pet && dd.pet.toLowerCase()===pet.toLowerCase()) found=dd;
-    });
-    return found;
-  }catch(e){ return null; }
-}
-
-// LocalStorage fallback
 function lsSave(){
+  try{localStorage.setItem('bbv3_'+((state.user&&state.user.uid)||'guest'), JSON.stringify(state));}catch(e){}
+}
+function lsLoad(){
   try{
     var uid = state.user && state.user.uid;
-    localStorage.setItem('bbv_'+(uid||'g'), JSON.stringify(state));
+    var d = localStorage.getItem('bbv3_'+(uid||'guest'));
+    if(d){var p=JSON.parse(d);Object.keys(p).forEach(function(k){if(k!=='user')state[k]=p[k];});}
   }catch(e){}
 }
-function lsLoadUser(uid){
+async function fbLoadUser(uid){
+  if(!FB_ENABLED) return null;
   try{
-    var d=localStorage.getItem('bbv_'+uid);
-    return d ? JSON.parse(d) : null;
-  }catch(e){ return null; }
+    var doc = await db.collection('users').doc(uid).get();
+    return doc.exists ? doc.data() : null;
+  }catch(e){return null;}
 }
-function lsFindByEmail(email){
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    if(k&&k.startsWith('bbv_')){
-      try{
-        var d=JSON.parse(localStorage.getItem(k));
-        if(d&&d.user&&d.user.email===email.toLowerCase()) return d.user;
-      }catch(e){}
-    }
-  }
-  return null;
-}
-function lsFindByUsernameAndPet(username,pet){
-  for(var i=0;i<localStorage.length;i++){
-    var k=localStorage.key(i);
-    if(k&&k.startsWith('bbv_')){
-      try{
-        var d=JSON.parse(localStorage.getItem(k));
-        if(d&&d.user&&d.user.username===username&&d.user.pet&&d.user.pet.toLowerCase()===pet.toLowerCase()) return d.user;
-      }catch(e){}
-    }
-  }
-  return null;
-}
-
-function saveAll(){
-  if(state.user){
-    var uid=state.user.uid;
-    var data=JSON.parse(JSON.stringify(state));
-    data.lastSeen=Date.now();
-    fbSave(uid, data);
-    lsSave();
-  }
-}
-
-// Broadcast check
 async function fbCheckBroadcast(){
-  if(!window._FB || !state.user) return;
+  if(!FB_ENABLED) return;
   try{
-    var snap = await window._fbGetDoc(window._fbDoc(window._db,'admin','broadcast'));
-    if(snap.exists()){
-      var d=snap.data();
-      var shown=parseInt(localStorage.getItem('bbv_bc_shown')||'0');
-      if(d.timestamp&&d.timestamp>shown&&d.message){
-        setTimeout(function(){ showNotif('📢 '+d.message,'info'); },1500);
-        localStorage.setItem('bbv_bc_shown', d.timestamp);
+    var doc = await db.collection('admin').doc('broadcast').get();
+    if(doc.exists){
+      var data = doc.data();
+      var lastShown = parseInt(localStorage.getItem('bbv_broadcast_shown')||'0');
+      if(data.timestamp && data.timestamp > lastShown && data.message){
+        showNotif('📢 '+data.message,'info');
+        localStorage.setItem('bbv_broadcast_shown', data.timestamp);
       }
     }
   }catch(e){}
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  BOOT
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 document.addEventListener('DOMContentLoaded', function(){
+  lsLoad();
   applyDarkMode();
+  updateAllDisplays();
+  startImgRotation();
   startExchangeSim();
   renderSwapCoins();
-  startImgRotation();
+  updateRefCode();
+  checkMiningResume();
+  updateMenuUser();
+  document.getElementById('speed-slider').value = state.miningSpeed;
+  document.getElementById('speed-display').textContent = state.miningSpeed;
+  updateSpeedInfo(state.miningSpeed);
   startAlarmCheck();
-
-  // Try to restore last session from localStorage uid pointer
-  var savedUid = localStorage.getItem('bbv_active_uid');
-  if(savedUid){
-    var ls = lsLoadUser(savedUid);
-    if(ls && ls.user){
-      Object.assign(state, ls);
-      onUserReady();
-    }
-  }
-
-  updateAllDisplays();
-
-  // When Firebase is ready, try to refresh from cloud
-  if(window._FB){
-    onFirebaseReady();
-  } else {
-    document.addEventListener('firebase-ready', onFirebaseReady);
-  }
+  applyBoostUI();
+  fbCheckBroadcast();
 });
 
-async function onFirebaseReady(){
-  var savedUid = localStorage.getItem('bbv_active_uid');
-  if(savedUid && state.user){
-    var cloud = await fbLoad(savedUid);
-    if(cloud && cloud.user){
-      Object.assign(state, cloud);
-      onUserReady();
-      updateAllDisplays();
-    }
-    fbCheckBroadcast();
-  }
-}
-
-function onUserReady(){
-  updateMenuUser();
-  updateRefCode();
-  applyBoostUI();
-  checkMiningResume();
-  document.getElementById('speed-slider').value = state.miningSpeed||10;
-  document.getElementById('speed-display').textContent = state.miningSpeed||10;
-  updateSpeedInfo(state.miningSpeed||10);
-  applyDarkMode();
-}
-
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  MENU
-// ════════════════════════════════════════════════
-function openMenu(){ document.getElementById('menu-overlay').classList.add('open'); document.getElementById('menu-panel').classList.add('open'); }
-function closeMenu(){ document.getElementById('menu-overlay').classList.remove('open'); document.getElementById('menu-panel').classList.remove('open'); }
+// ═══════════════════════════════
+function openMenu(){document.getElementById('menu-overlay').classList.add('open');document.getElementById('menu-panel').classList.add('open');}
+function closeMenu(){document.getElementById('menu-overlay').classList.remove('open');document.getElementById('menu-panel').classList.remove('open');}
 function updateMenuUser(){
   var el=document.getElementById('menu-user-info');
   var bs=document.getElementById('menu-boost-status');
   if(state.user){
     el.style.display='block';
-    setText('menu-username-label', state.user.username);
+    setText('menu-username-label',state.user.username);
     if(state.boostLevel>0){
       bs.style.display='block';
       bs.textContent='⚡ Speed '+state.boostLevel+' Boost Active';
-    }else{ bs.style.display='none'; }
-  }else{ el.style.display='none'; bs.style.display='none'; }
-}
-
-// ════════════════════════════════════════════════
-//  MODALS
-// ════════════════════════════════════════════════
-function openModal(id){ document.getElementById(id).classList.add('open'); if(id==='exchange-modal')renderExchangeRates(); }
-function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-
-function openWhatsAppSupport(){
-  var msg = encodeURIComponent('Hello BBV Team! I need support.');
-  window.open('https://wa.me/'+WHATSAPP+'?text='+msg, '_blank');
-}
-
-// ════════════════════════════════════════════════
-//  CREATE ACCOUNT
-// ════════════════════════════════════════════════
-async function submitCreateAccount(){
-  var u=gv('ca-username').trim(), ph=gv('ca-phone').trim(),
-      pw=gv('ca-password').trim(), em=gv('ca-email').trim().toLowerCase(), pt=gv('ca-pet').trim();
-  if(!u||!ph||!pw||!em||!pt){ showNotif('Please fill in all fields','error'); return; }
-  if(!/\S+@\S+\.\S+/.test(em)){ showNotif('Please enter a valid email address','error'); return; }
-
-  var uid = emailToUid(em);
-
-  // Check duplicate
-  var existing = await fbLoad(uid);
-  if(!existing){ existing = lsFindByEmail(em); }
-  if(existing && existing.user){ showNotif('Email already registered','error'); return; }
-
-  var now = Date.now();
-  var refCode = u.replace(/[^a-zA-Z0-9]/g,'').slice(0,4).toUpperCase()||'MINE';
-  var acc = {
-    uid:uid, username:u, phone:ph, password:pw,
-    email:em, pet:pt, refCode:refCode,
-    refEarnings:0, createdAt:now,
-    createdAtStr:fmtDate(now), lastSeen:now,
-    isEnabled:true, boostLevel:0, boostExpiry:null
-  };
-
-  state.user = acc;
-  state.isEnabled = true;
-  state.boostLevel = 0;
-  state.balanceNGN = 0; state.balanceBTC = 0;
-  state.balanceUSD = 0; state.balanceMining = 0;
-  state.miningActive = false;
-
-  localStorage.setItem('bbv_active_uid', uid);
-  saveAll();
-
-  closeModal('create-modal');
-  ['ca-username','ca-phone','ca-password','ca-email','ca-pet'].forEach(function(id){
-    var e=document.getElementById(id); if(e) e.value='';
-  });
-  showSuccess('✅','Account Created!','Welcome to BitcoinBlastVault, '+u+'!');
-  updateMenuUser(); updateRefCode(); updateAllDisplays();
-}
-
-// ════════════════════════════════════════════════
-//  LOGIN  ← THE MAIN FIX
-// ════════════════════════════════════════════════
-async function submitLogin(){
-  var em=gv('li-email').trim().toLowerCase(), pw=gv('li-password').trim();
-  if(!em||!pw){ showNotif('Please enter your email and password','error'); return; }
-
-  var found = null;
-
-  // 1. Try Firebase
-  found = await fbFindByEmail(em);
-
-  // 2. Fallback to localStorage
-  if(!found){ found = lsFindByEmail(em); }
-
-  if(!found){ showNotif('No account found with this email','error'); return; }
-  if(found.password !== pw){ showNotif('Incorrect password','error'); return; }
-  if(found.isEnabled === false){ showNotif('⛔ Your account has been disabled. Contact support.','error'); return; }
-
-  var uid = found.uid || emailToUid(em);
-
-  // Load full saved state for this user
-  var savedState = await fbLoad(uid);
-  if(!savedState){ savedState = lsLoadUser(uid); }
-
-  if(savedState){
-    // Restore all state fields except user object itself
-    var keys=['miningActive','miningStart','miningSpeed','miningSessionEarned',
-      'sessionMiningCount','balanceMining','balanceBTC','balanceUSD','balanceNGN',
-      'darkMode','alarmTime','alarmLabel','redeemedCodes','boostLevel','boostExpiry','isEnabled'];
-    keys.forEach(function(k){ if(savedState[k]!==undefined) state[k]=savedState[k]; });
+    }else{bs.style.display='none';}
+  }else{
+    el.style.display='none';bs.style.display='none';
   }
-
-  state.user = found;
-  state.user.lastSeen = Date.now();
-  localStorage.setItem('bbv_active_uid', uid);
-  saveAll();
-
-  closeModal('login-modal');
-  document.getElementById('li-email').value='';
-  document.getElementById('li-password').value='';
-  showNotif('Welcome back, '+found.username+'! 🎉');
-  onUserReady();
-  updateAllDisplays();
-  fbCheckBroadcast();
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
+//  MODALS
+// ═══════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('open');if(id==='exchange-modal')renderExchangeRates();}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+function openWhatsAppSupport() {
+  // Show a quick loading animation
+  const loader = document.createElement('div');
+  loader.innerText = "Connecting to WhatsApp...";
+  loader.style.position = "fixed";
+  loader.style.top = "50%";
+  loader.style.left = "50%";
+  loader.style.transform = "translate(-50%, -50%)";
+  loader.style.background = "#25D366";
+  loader.style.color = "#fff";
+  loader.style.padding = "10px 20px";
+  loader.style.borderRadius = "8px";
+  loader.style.zIndex = "9999";
+  document.body.appendChild(loader);
+
+  // After short delay, redirect to WhatsApp
+  setTimeout(() => {
+    const phoneNumber = "17404061406"; // Replace with your WhatsApp number
+    const message = encodeURIComponent("Hello BBV Team! I need a support");
+    const url = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.location.href = url;
+  }, 500); // 1.5s delay for animation
+}
+
+// ═══════════════════════════════
+//  CREATE ACCOUNT
+// ═══════════════════════════════
+function submitCreateAccount(){
+  var u=gv('ca-username').trim(),ph=gv('ca-phone').trim(),
+      pw=gv('ca-password').trim(),em=gv('ca-email').trim(),pt=gv('ca-pet').trim();
+  if(!u||!ph||!pw||!em||!pt){showNotif('Please fill in all fields','error');return;}
+  if(!/\S+@\S+\.\S+/.test(em)){showNotif('Please enter a valid email address','error');return;}
+  var now=Date.now();
+  var uid='user_'+now+'_'+Math.random().toString(36).slice(2,7);
+  var refCode=u.replace(/[^a-zA-Z0-9]/g,'').slice(0,4).toUpperCase()||'MINE';
+  var acc={
+    uid:uid,username:u,phone:ph,password:pw,email:em,pet:pt,
+    refCode:refCode,refEarnings:0,
+    createdAt:now,createdAtStr:fmtDate(now),
+    lastSeen:now,isEnabled:true,
+    boostLevel:0,boostExpiry:null
+  };
+  state.user=acc;
+  state.isEnabled=true;
+  fbSaveUser();
+  lsLoad();
+  fbSaveState();
+  closeModal('create-modal');
+  ['ca-username','ca-phone','ca-password','ca-email','ca-pet'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  showSuccess('✅','Account Created!','Welcome to BitcoinBlastVault, '+u+'!');
+  updateMenuUser();updateRefCode();
+}
+
+// ═══════════════════════════════
+//  LOGIN
+// ═══════════════════════════════
+function submitLogin(){
+  var em=gv('li-email').trim(),pw=gv('li-password').trim();
+  if(!em||!pw){showNotif('Please enter your email and password','error');return;}
+  // Try Firebase first, fallback to localStorage scan
+  loginFromFirebase(em,pw);
+}
+async function loginFromFirebase(em,pw){
+  var found=null;
+  if(FB_ENABLED){
+    try{
+      var snap=await db.collection('users').where('email','==',em).where('password','==',pw).limit(1).get();
+      if(!snap.empty)found=snap.docs[0].data();
+    }catch(e){}
+  }
+  if(!found){
+    // fallback: check localStorage for any user key
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&k.startsWith('bbv3_')){
+        try{
+          var d=JSON.parse(localStorage.getItem(k));
+          if(d&&d.user&&d.user.email===em&&d.user.password===pw){found=d.user;break;}
+        }catch(e){}
+      }
+    }
+  }
+  if(!found){showNotif('Incorrect email or password','error');return;}
+  if(found.isEnabled===false){showNotif('⛔ Your account has been disabled. Please contact support.','error');return;}
+  state.user=found;
+  // Load user's saved state
+  var savedState=null;
+  if(FB_ENABLED){
+    try{
+      var doc=await db.collection('users').doc(found.uid).get();
+      if(doc.exists)savedState=doc.data();
+    }catch(e){}
+  }
+  if(!savedState){
+    try{var ls=localStorage.getItem('bbv3_'+found.uid);if(ls)savedState=JSON.parse(ls);}catch(e){}
+  }
+  if(savedState){
+    var keys=['miningActive','miningStart','miningSpeed','miningSessionEarned','sessionMiningCount',
+      'balanceMining','balanceBTC','balanceUSD','balanceNGN','darkMode','alarmTime','alarmLabel',
+      'redeemedCodes','boostLevel','boostExpiry','isEnabled'];
+    keys.forEach(function(k){if(savedState[k]!==undefined)state[k]=savedState[k];});
+  }
+  // update lastSeen
+  state.user.lastSeen=Date.now();
+  fbSaveUser();
+  closeModal('login-modal');
+  document.getElementById('li-email').value='';document.getElementById('li-password').value='';
+  showNotif('Welcome back, '+found.username+'! 🎉');
+  updateMenuUser();updateRefCode();applyBoostUI();updateAllDisplays();
+  checkMiningResume();
+  applyDarkMode();
+}
+
+// ═══════════════════════════════
 //  FORGOT PASSWORD
-// ════════════════════════════════════════════════
-async function verifyForgotPw(){
-  var u=gv('fp-username').trim(), pt=gv('fp-pet').trim();
-  if(!u||!pt){ showNotif('Please fill both fields','error'); return; }
-  var found = await fbFindByUsernameAndPet(u,pt);
-  if(!found) found = lsFindByUsernameAndPet(u,pt);
-  if(!found){ showNotif('Username or pet name is incorrect','error'); return; }
-  document.getElementById('fp-pw-show').textContent = found.password;
-  document.getElementById('fp-result').style.display = 'block';
-  document.getElementById('fp-new-pw').dataset.uid   = found.uid||emailToUid(found.email);
+// ═══════════════════════════════
+function verifyForgotPw(){
+  var u=gv('fp-username').trim(),pt=gv('fp-pet').trim();
+  if(!u||!pt){showNotif('Please fill both fields','error');return;}
+  searchUserForPw(u,pt);
+}
+async function searchUserForPw(u,pt){
+  var found=null;
+  if(FB_ENABLED){
+    try{
+      var snap=await db.collection('users').where('username','==',u).limit(5).get();
+      snap.forEach(function(d){var dd=d.data();if(dd.pet&&dd.pet.toLowerCase()===pt.toLowerCase())found=dd;});
+    }catch(e){}
+  }
+  if(!found){
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&k.startsWith('bbv3_')){
+        try{var d=JSON.parse(localStorage.getItem(k));if(d&&d.user&&d.user.username===u&&d.user.pet&&d.user.pet.toLowerCase()===pt.toLowerCase()){found=d.user;break;}}catch(e){}
+      }
+    }
+  }
+  if(!found){showNotif('Username or pet name is incorrect','error');return;}
+  document.getElementById('fp-pw-show').textContent=found.password;
+  document.getElementById('fp-result').style.display='block';
+  document.getElementById('fp-new-pw').dataset.uid=found.uid;
+  document.getElementById('fp-new-pw').dataset.email=found.email;
 }
 async function changeForgotPw(){
   var np=gv('fp-new-pw').trim();
   var uid=document.getElementById('fp-new-pw').dataset.uid;
-  if(!np){ showNotif('Please enter a new password','error'); return; }
-  // Update in Firebase
-  if(window._FB){
-    try{ await window._fbUpdateDoc(window._fbDoc(window._db,'users',uid),{'user.password':np,'password':np}); }catch(e){}
+  if(!np){showNotif('Please enter a new password','error');return;}
+  if(FB_ENABLED){
+    try{await db.collection('users').doc(uid).update({password:np});}catch(e){}
   }
-  // Update in localStorage
   try{
-    var ls=localStorage.getItem('bbv_'+uid);
-    if(ls){var d=JSON.parse(ls);if(d.user)d.user.password=np;localStorage.setItem('bbv_'+uid,JSON.stringify(d));}
+    var ls=localStorage.getItem('bbv3_'+uid);
+    if(ls){var d=JSON.parse(ls);if(d.user)d.user.password=np;localStorage.setItem('bbv3_'+uid,JSON.stringify(d));}
   }catch(e){}
-  if(state.user&&state.user.uid===uid) state.user.password=np;
+  if(state.user&&state.user.uid===uid)state.user.password=np;
   document.getElementById('fp-result').style.display='none';
   closeModal('fp-modal');
   showSuccess('🔑','Password Changed!','Your password has been updated successfully.');
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  ALARM
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function saveAlarm(){
   var t=gv('alarm-time'),l=gv('alarm-label-sel');
-  if(!t){ showNotif('Please select a time','error'); return; }
-  state.alarmTime=t; state.alarmLabel=l; saveAll();
+  if(!t){showNotif('Please select a time','error');return;}
+  state.alarmTime=t;state.alarmLabel=l;fbSaveState();
   document.getElementById('alarm-status').textContent='✅ Alarm set for '+t;
   showNotif('Alarm set for '+t+' ⏰');
 }
 function startAlarmCheck(){
   setInterval(function(){
-    if(!state.alarmTime) return;
+    if(!state.alarmTime)return;
     var now=new Date();
     var hm=pad(now.getHours())+':'+pad(now.getMinutes());
     if(hm===state.alarmTime&&now.getSeconds()<4){
@@ -1157,55 +1220,59 @@ function startAlarmCheck(){
     }
   },1000);
 }
-function pad(n){ return n<10?'0'+n:''+n; }
+function pad(n){return n<10?'0'+n:''+n;}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  SETTINGS
-// ════════════════════════════════════════════════
-function toggleDark(){ state.darkMode=!state.darkMode; applyDarkMode(); saveAll(); }
+// ═══════════════════════════════
+function toggleDark(){state.darkMode=!state.darkMode;applyDarkMode();fbSaveState();}
 function applyDarkMode(){
   var tog=document.getElementById('dark-toggle');
-  if(state.darkMode){ document.body.classList.remove('light-mode'); if(tog)tog.classList.add('on'); }
-  else{ document.body.classList.add('light-mode'); if(tog)tog.classList.remove('on'); }
+  if(state.darkMode){document.body.classList.remove('light-mode');if(tog)tog.classList.add('on');}
+  else{document.body.classList.add('light-mode');if(tog)tog.classList.remove('on');}
 }
 function updateSpeed(v){
-  if(state.boostLevel>0){ showNotif('Speed locked — Boost is active','error'); document.getElementById('speed-slider').value=state.miningSpeed; return; }
+  if(state.boostLevel>0){showNotif('Speed locked — Boost is active','error');document.getElementById('speed-slider').value=state.miningSpeed;return;}
   state.miningSpeed=parseInt(v);
-  setText('speed-display',v); updateSpeedInfo(state.miningSpeed); saveAll();
+  setText('speed-display',v);updateSpeedInfo(state.miningSpeed);fbSaveState();
 }
 function updateSpeedInfo(s){
-  var el=document.getElementById('speed-info-text'); if(!el) return;
-  var hrs=getCycleDurationHrs(s), earn=getSessionEarningNGN(s);
+  var el=document.getElementById('speed-info-text');if(!el)return;
+  var hrs=getCycleDurationHrs(s),earn=getSessionEarningNGN(s);
   el.textContent='Speed '+s+' → '+hrs.toFixed(0)+'hr cycle → Earn ₦'+earn.toFixed(0)+' per session';
 }
 function getCycleDurationHrs(s){
-  if(state.boostLevel===2000) return 130;
-  if(state.boostLevel===1000) return 120;
-  s=s||state.miningSpeed||10;
+  s=s||state.miningSpeed;
+  if(state.boostLevel===1000)return 120;
+  if(state.boostLevel===2000)return 130;
   return 12+((s-10)/90)*12;
 }
-function getCycleDurationMs(){ return getCycleDurationHrs(state.miningSpeed)*3600*1000; }
+function getCycleDurationMs(){return getCycleDurationHrs(state.miningSpeed)*3600*1000;}
 function getSessionEarningNGN(s){
-  if(state.boostLevel===2000) return 2000;
-  if(state.boostLevel===1000) return 1000;
-  s=s||state.miningSpeed||10;
-  return 50+((s-10)/90)*50;
+  if(state.boostLevel===1000)return 1000;
+  if(state.boostLevel===2000)return 2000;
+  s=s||state.miningSpeed;return 50+((s-10)/90)*50;
+}
+function getReMineWaitHrs(){
+  if(state.boostLevel>0)return 50;
+  return getCycleDurationHrs(state.miningSpeed);
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  BOOST SYSTEM
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function openBoostModal(tier){
   closeModal('settings-modal');
   openModal('boost'+tier+'-modal');
 }
 function confirmBoostPayment(tier){
-  if(!state.user){ closeModal('boost'+tier+'-modal'); openModal('login-modal'); showNotif('Please login first','error'); return; }
+  if(!state.user){closeModal('boost'+tier+'-modal');openModal('login-modal');showNotif('Please login first','error');return;}
   closeModal('boost'+tier+'-modal');
   var bl=document.getElementById('boost-loading');
+  var bt=document.getElementById('boost-load-text');
   bl.classList.add('show');
   setText('boost-load-text','Submitting your request...');
-  setTimeout(function(){ setText('boost-load-text','Connecting to support...'); },500);
+  setTimeout(function(){setText('boost-load-text','Connecting to support...');},500);
   setTimeout(function(){
     bl.classList.remove('show');
     var amt=tier===1000?'5 USDT':'10 USDT';
@@ -1216,84 +1283,90 @@ function confirmBoostPayment(tier){
       '👤 Username: '+state.user.username+'\n'+
       '💰 Amount Sent: '+amt+'\n'+
       '📍 Wallet Address: '+BOOST_WALLET+'\n\n'+
-      'Please find my payment screenshot attached.\n'+
-      'Kindly activate Speed '+tier+' Boost on my account. Thank you! ⚡'
+      'I want to confirm my payment and request activation of Speed '+tier+' Boost on my account.\n'+
+      'Please find my payment screenshot attached.\n\n'+
+      'Thank you! ⚡'
     );
-    showSuccess('📤','Request Submitted!','Your confirmation is being sent. Our team will verify and activate your boost within 24 hours.');
-    setTimeout(function(){ window.open('https://wa.me/'+WHATSAPP+'?text='+msg,'_blank'); },1000);
-    // Log to Firebase
-    if(window._FB && state.user){
+    showSuccess('📤','Request Submitted!','Your confirmation has been sent. Our team will verify your payment and activate your boost within 24 hours.');
+    setTimeout(function(){window.open('https://wa.me/'+WHATSAPP+'?text='+msg,'_blank');},1000);
+    // Log pending boost request in Firebase
+    if(FB_ENABLED&&state.user){
       try{
-        window._fbSetDoc(
-          window._fbDoc(window._db,'boost_requests',state.user.uid+'_'+tier+'_'+Date.now()),
-          {uid:state.user.uid,email:state.user.email,username:state.user.username,tier:tier,requestedAt:Date.now(),status:'pending'}
-        );
+        db.collection('boost_requests').add({
+          uid:state.user.uid,email:state.user.email,username:state.user.username,
+          tier:tier,requestedAt:Date.now(),status:'pending'
+        });
       }catch(e){}
     }
   },1000);
 }
 function applyBoostUI(){
-  var isBoosted = state.boostLevel>0 && state.boostExpiry && Date.now()<state.boostExpiry;
-  if(!isBoosted && state.boostLevel>0){ state.boostLevel=0; state.boostExpiry=null; saveAll(); }
+  var isBoosted=state.boostLevel>0&&state.boostExpiry&&Date.now()<state.boostExpiry;
+  if(!isBoosted&&state.boostLevel>0){
+    // boost expired
+    state.boostLevel=0;state.boostExpiry=null;fbSaveState();
+  }
   var wrap=document.getElementById('mining-img-wrap');
   var badge=document.getElementById('boost-badge');
   var bl=document.getElementById('boosted-label');
   var bcRow=document.getElementById('bc-boost-row');
-  var fill=document.getElementById('charge-fill');
-  var counter=document.getElementById('mine-count-val');
   if(isBoosted){
     wrap.classList.add('boosted');
     badge.classList.add('show');
     badge.textContent='⚡ SPEED '+state.boostLevel;
-    if(bl) bl.classList.add('show');
-    if(bcRow){ bcRow.style.display='flex'; setText('bc-boost-val','Speed '+state.boostLevel); }
-    if(fill) fill.classList.add('boosted-fill');
-    if(counter) counter.style.color='var(--cyan)';
+    bl.classList.add('show');
+    if(bcRow){bcRow.style.display='flex';setText('bc-boost-val','Speed '+state.boostLevel);}
+    document.getElementById('charge-fill').classList.add('boosted-fill');
+    document.getElementById('mine-count-val').style.color='var(--cyan)';
   }else{
     wrap.classList.remove('boosted');
     badge.classList.remove('show');
-    if(bl) bl.classList.remove('show');
-    if(bcRow) bcRow.style.display='none';
-    if(fill) fill.classList.remove('boosted-fill');
-    if(counter) counter.style.color='var(--magenta2)';
+    bl.classList.remove('show');
+    if(bcRow)bcRow.style.display='none';
+    document.getElementById('charge-fill').classList.remove('boosted-fill');
+    document.getElementById('mine-count-val').style.color='var(--magenta2)';
   }
   updateMenuUser();
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  EXCHANGE
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function startExchangeSim(){
   setInterval(function(){
-    Object.keys(liveRates).forEach(function(k){ liveRates[k]=liveRates[k]*(1+(Math.random()-.5)*0.004); });
+    Object.keys(liveRates).forEach(function(k){liveRates[k]=liveRates[k]*(1+(Math.random()-.5)*0.004);});
     updateSwapCoins();
   },3000);
 }
 function renderExchangeRates(){
   var pairs=[
-    {label:'USDT → NGN',key:'USDT_NGN',icon:'💵'},{label:'BTC → NGN',key:'BTC_NGN',icon:'₿'},
-    {label:'BTC → USD',key:'BTC_USD',icon:'₿'},{label:'BNB → NGN',key:'BNB_NGN',icon:'🟡'},
-    {label:'ETH → NGN',key:'ETH_NGN',icon:'💎'},{label:'SOL → NGN',key:'SOL_NGN',icon:'🌐'}
+    {label:'USDT → NGN',key:'USDT_NGN',icon:'💵'},
+    {label:'BTC → NGN',key:'BTC_NGN',icon:'₿'},
+    {label:'BTC → USD',key:'BTC_USD',icon:'₿'},
+    {label:'BNB → NGN',key:'BNB_NGN',icon:'🟡'},
+    {label:'ETH → NGN',key:'ETH_NGN',icon:'💎'},
+    {label:'SOL → NGN',key:'SOL_NGN',icon:'🌐'}
   ];
   document.getElementById('exchange-rates-list').innerHTML=pairs.map(function(p){
     return '<div class="exc-row"><span class="exc-coin">'+p.icon+' '+p.label+'</span><span class="exc-rate">'+fmtRate(p.key)+'</span></div>';
   }).join('');
 }
-function fmtRate(k){ var v=liveRates[k]; return (k.includes('NGN')?'₦':'$')+Math.round(v).toLocaleString(); }
+function fmtRate(k){var v=liveRates[k];return (k.includes('NGN')?'₦':'$')+Math.round(v).toLocaleString();}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  SWAP
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 var COINS=[{name:'Bitcoin',sym:'BTC',icon:'₿',key:'BTC_NGN'},{name:'Ethereum',sym:'ETH',icon:'💎',key:'ETH_NGN'},{name:'BNB',sym:'BNB',icon:'🟡',key:'BNB_NGN'},{name:'Solana',sym:'SOL',icon:'🌐',key:'SOL_NGN'},{name:'Tether',sym:'USDT',icon:'💵',key:'USDT_NGN'}];
 function renderSwapCoins(){
-  var el=document.getElementById('swap-coins'); if(!el) return;
+  var el=document.getElementById('swap-coins');
   el.innerHTML=COINS.map(function(c){
     return '<div class="coin-row"><div class="coin-icon">'+c.icon+'</div><div class="coin-info"><div class="coin-name">'+c.name+'</div><div class="coin-sub">'+c.sym+'</div></div><div class="coin-price"><div class="coin-val" id="swap-'+c.sym+'">₦'+Math.round(liveRates[c.key]).toLocaleString()+'</div><div class="coin-change up" id="swap-chg-'+c.sym+'">+0.00%</div></div></div>';
   }).join('');
 }
 function updateSwapCoins(){
   COINS.forEach(function(c){
-    var el=document.getElementById('swap-'+c.sym); var chg=document.getElementById('swap-chg-'+c.sym); if(!el) return;
+    var el=document.getElementById('swap-'+c.sym);var chg=document.getElementById('swap-chg-'+c.sym);
+    if(!el)return;
     var now=liveRates[c.key],prev=prevRates[c.key]||now,pct=(now-prev)/prev*100;
     el.textContent='₦'+Math.round(now).toLocaleString();
     chg.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
@@ -1301,35 +1374,35 @@ function updateSwapCoins(){
     prevRates[c.key]=now;
   });
 }
-function downloadApk(){ showNotif('📲 Starting download...'); var a=document.createElement('a'); a.href='BTCblastvault.apk'; a.download='BTCblastvault.apk'; a.click(); }
+function downloadApk(){showNotif('📲 Starting download...');var a=document.createElement('a');a.href='BTCblastvault.apk';a.download='BTCblastvault.apk';a.click();}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  IMAGE ROTATION
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 var imgTimer=null;
 function startImgRotation(){
-  if(imgTimer) clearInterval(imgTimer);
+  if(imgTimer)clearInterval(imgTimer);
   imgTimer=setInterval(function(){
     state.currentImg=state.currentImg>=20?1:state.currentImg+1;
     var img=document.getElementById('mining-img');
     img.style.opacity='0';
-    setTimeout(function(){ img.src='image'+state.currentImg+'.png'; img.style.opacity='1'; },400);
+    setTimeout(function(){img.src='image'+state.currentImg+'.png';img.style.opacity='1';},400);
   },30000);
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  MINING
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function handleMineClick(){
-  if(!state.user){ openModal('create-modal'); showNotif('Create an account to start mining! ⛏️'); return; }
-  if(!state.isEnabled){ showNotif('⛔ Your account is currently disabled. Contact support.','error'); return; }
-  if(state.miningActive){ showNotif('⏱️ Mining in progress! Come back later.'); return; }
+  if(!state.user){openModal('create-modal');showNotif('Create an account to start mining! ⛏️');return;}
+  if(!state.isEnabled){showNotif('⛔ Your account is currently disabled. Contact support.','error');return;}
+  if(state.miningActive){showNotif('⏱️ Mining in progress! Come back later.');return;}
   startMining();
 }
 function startMining(){
-  state.miningActive=true; state.miningStart=Date.now();
-  state.miningSessionEarned=0; state.sessionMiningCount=state.balanceMining||0;
-  saveAll();
+  state.miningActive=true;state.miningStart=Date.now();
+  state.miningSessionEarned=0;state.sessionMiningCount=0;
+  fbSaveState();
   document.getElementById('mining-img-wrap').classList.add('mining');
   setText('mine-label','⛏️ MINING IN PROGRESS...');
   setText('mine-status','Session started!');
@@ -1339,19 +1412,15 @@ function startMining(){
 function checkMiningResume(){
   if(state.miningActive&&state.miningStart){
     var elapsed=Date.now()-state.miningStart;
-    if(elapsed>=getCycleDurationMs()){ completeMining(); }
-    else{
-      document.getElementById('mining-img-wrap').classList.add('mining');
-      setText('mine-label','⛏️ MINING IN PROGRESS...');
-      runMiningLoop();
-    }
+    if(elapsed>=getCycleDurationMs()){completeMining();}
+    else{document.getElementById('mining-img-wrap').classList.add('mining');setText('mine-label','⛏️ MINING IN PROGRESS...');runMiningLoop();}
   }
 }
 var mineLoop=null;
 function runMiningLoop(){
-  if(mineLoop) clearInterval(mineLoop);
+  if(mineLoop)clearInterval(mineLoop);
   mineLoop=setInterval(function(){
-    if(!state.miningActive){ clearInterval(mineLoop); return; }
+    if(!state.miningActive){clearInterval(mineLoop);return;}
     var elapsed=Date.now()-state.miningStart;
     var cycle=getCycleDurationMs();
     var pct=Math.min(elapsed/cycle,1);
@@ -1364,13 +1433,14 @@ function runMiningLoop(){
     state.balanceUSD=parseFloat((targetUSD*pct).toFixed(5));
     state.miningSessionEarned=parseFloat((targetNGN*pct).toFixed(2));
     updateAllDisplays();
-    var cfill=document.getElementById('charge-fill'); if(cfill)cfill.style.width=(pct*100).toFixed(1)+'%';
-    var cpct=document.getElementById('charge-pct');  if(cpct)cpct.textContent=Math.floor(pct*100)+'%';
-    var ctl=document.getElementById('charge-time-left'); if(ctl)ctl.textContent=fmtMs(Math.max(cycle-elapsed,0))+' left';
-    if(Math.random()<.15) spawnParticle();
-    if(state.boostLevel>0&&Math.random()<.2) spawnSmoke();
-    if(pct>=1) completeMining();
-    if(Math.random()<0.01) saveAll();
+    var cfill=document.getElementById('charge-fill');if(cfill)cfill.style.width=(pct*100).toFixed(1)+'%';
+    var cpct=document.getElementById('charge-pct');if(cpct)cpct.textContent=Math.floor(pct*100)+'%';
+    var ctl=document.getElementById('charge-time-left');if(ctl)ctl.textContent=fmtMs(Math.max(cycle-elapsed,0))+' left';
+    // Particles
+    if(Math.random()<.15)spawnParticle();
+    if(state.boostLevel>0&&Math.random()<.2)spawnSmoke();
+    if(pct>=1)completeMining();
+    if(Math.random()<0.01)fbSaveState(); // periodic save
   },300);
 }
 function completeMining(){
@@ -1378,199 +1448,178 @@ function completeMining(){
   state.miningActive=false;
   var earned=getSessionEarningNGN();
   state.balanceNGN=parseFloat((state.balanceNGN+earned).toFixed(2));
-  state.miningStart=null; state.miningSessionEarned=0;
-  saveAll();
+  state.miningStart=null;state.miningSessionEarned=0;
+  fbSaveState();
   document.getElementById('mining-img-wrap').classList.remove('mining');
   setText('mine-label','TAP TO MINE AGAIN');
   setText('mine-status','✅ Session complete!');
-  var cfill=document.getElementById('charge-fill'); if(cfill)cfill.style.width='100%';
-  var cpct=document.getElementById('charge-pct');  if(cpct)cpct.textContent='100%';
-  var ctl=document.getElementById('charge-time-left'); if(ctl)ctl.textContent='Done!';
+  var cfill=document.getElementById('charge-fill');if(cfill)cfill.style.width='100%';
+  var cpct=document.getElementById('charge-pct');if(cpct)cpct.textContent='100%';
+  var ctl=document.getElementById('charge-time-left');if(ctl)ctl.textContent='Done!';
   showSuccess('💰','Mining Complete!','You earned ₦'+earned.toFixed(2)+'! Tap to mine again.');
   updateAllDisplays();
 }
-function fmtMs(ms){ var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000); return h+'h '+m+'m '+s+'s'; }
+function fmtMs(ms){var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000),s=Math.floor((ms%60000)/1000);return h+'h '+m+'m '+s+'s';}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  PARTICLES
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 var pVals=['+1','+2','+3','+5','+10','+20','+30','+50','+70','+90'];
 function spawnParticle(){
-  var zone=document.getElementById('particle-zone'); if(!zone) return;
-  var el=document.createElement('div'); el.className='particle';
+  var zone=document.getElementById('particle-zone');
+  var el=document.createElement('div');el.className='particle';
   el.textContent=pVals[Math.floor(Math.random()*pVals.length)];
-  el.style.left=(15+Math.random()*170)+'px'; el.style.top=(50+Math.random()*130)+'px';
+  el.style.left=(15+Math.random()*170)+'px';el.style.top=(50+Math.random()*130)+'px';
   zone.appendChild(el);
-  setTimeout(function(){ if(el.parentNode)el.parentNode.removeChild(el); },1800);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},1800);
 }
 var smokeColors=['#aa00ff','#00e5ff','#ff00aa','#00ff88','#ffd700','#ff3355','#ffffff'];
 function spawnSmoke(){
-  var zone=document.getElementById('particle-zone'); if(!zone) return;
-  var el=document.createElement('div'); el.className='smoke-particle';
+  var zone=document.getElementById('particle-zone');
+  var el=document.createElement('div');el.className='smoke-particle';
   var size=(10+Math.random()*20)+'px';
-  el.style.width=size; el.style.height=size;
+  el.style.width=size;el.style.height=size;
   el.style.background=smokeColors[Math.floor(Math.random()*smokeColors.length)];
-  el.style.left=(20+Math.random()*160)+'px'; el.style.top=(80+Math.random()*80)+'px';
+  el.style.opacity='0.85';
+  el.style.left=(20+Math.random()*160)+'px';
+  el.style.top=(80+Math.random()*80)+'px';
   zone.appendChild(el);
-  setTimeout(function(){ if(el.parentNode)el.parentNode.removeChild(el); },2500);
+  setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el);},2500);
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  DISPLAYS
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function updateAllDisplays(){
-  var ngn=(state.balanceNGN||0)+(state.miningSessionEarned||0);
-  setText('disp-mining',(state.balanceMining||0).toFixed(8));
-  setText('disp-btc','₿'+(state.balanceBTC||0).toFixed(8));
-  setText('disp-usd','$'+(state.balanceUSD||0).toFixed(5));
+  var ngn=state.balanceNGN+(state.miningSessionEarned||0);
+  setText('disp-mining',state.balanceMining.toFixed(8));
+  setText('disp-btc','₿'+state.balanceBTC.toFixed(8));
+  setText('disp-usd','$'+state.balanceUSD.toFixed(5));
   setText('disp-ngn','₦'+ngn.toFixed(2));
   setText('bal-ngn-display','₦'+ngn.toFixed(2));
-  setText('mine-count-val',(state.balanceMining||0).toFixed(8));
+  setText('mine-count-val',state.balanceMining.toFixed(8));
   setText('bc-ngn','₦'+ngn.toFixed(2));
-  setText('bc-usd','$'+(state.balanceUSD||0).toFixed(5));
-  setText('bc-btc','₿'+(state.balanceBTC||0).toFixed(8));
-  setText('bc-mining',(state.balanceMining||0).toFixed(8));
+  setText('bc-usd','$'+state.balanceUSD.toFixed(5));
+  setText('bc-btc','₿'+state.balanceBTC.toFixed(8));
+  setText('bc-mining',state.balanceMining.toFixed(8));
 }
-function setText(id,val){ var el=document.getElementById(id); if(el) el.textContent=val; }
+function setText(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  BALANCE CARD
-// ════════════════════════════════════════════════
-function openBalCard(){ updateAllDisplays(); document.getElementById('balance-card-overlay').classList.add('open'); }
-function closeBalCard(){ document.getElementById('balance-card-overlay').classList.remove('open'); }
-document.getElementById('balance-card-overlay').addEventListener('click',function(e){ if(e.target===this) closeBalCard(); });
+// ═══════════════════════════════
+function openBalCard(){updateAllDisplays();document.getElementById('balance-card-overlay').classList.add('open');}
+function closeBalCard(){document.getElementById('balance-card-overlay').classList.remove('open');}
+document.getElementById('balance-card-overlay').addEventListener('click',function(e){if(e.target===this)closeBalCard();});
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  WITHDRAW
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function openWithdraw(){
   closeBalCard();
-  if(!state.user){ showNotif('Please login first','error'); return; }
-  var ngn=(state.balanceNGN||0)+(state.miningSessionEarned||0);
-  if(ngn<100000){ showNotif('❌ Minimum withdrawal is ₦100,000. Keep mining!','error'); return; }
-  var avEl=document.getElementById('wd-avail'); if(avEl) avEl.textContent='₦'+ngn.toFixed(2);
+  if(!state.user){showNotif('Please login first','error');return;}
+  var ngn=state.balanceNGN+(state.miningSessionEarned||0);
+  if(ngn<100000){showNotif('❌ Minimum withdrawal is ₦100,000. Keep mining!','error');return;}
+  var avEl=document.getElementById('wd-avail');if(avEl)avEl.textContent='₦'+ngn.toFixed(2);
   openModal('withdraw-modal');
 }
 function processWithdraw(){
   var amt=parseFloat(document.getElementById('wd-amount').value);
-  if(!amt||isNaN(amt)||amt<=0){ showNotif('Please enter a valid amount','error'); return; }
-  var ngn=(state.balanceNGN||0)+(state.miningSessionEarned||0);
-  if(amt<100000){ showNotif('❌ Minimum withdrawal amount is ₦100,000.00','error'); return; }
-  if(amt>ngn){ showNotif('❌ Insufficient balance','error'); return; }
+  if(!amt||isNaN(amt)||amt<=0){showNotif('Please enter a valid amount','error');return;}
+  var ngn=state.balanceNGN+(state.miningSessionEarned||0);
+  if(amt<100000){showNotif('❌ Minimum withdrawal amount is ₦100,000.00','error');return;}
+  if(amt>ngn){showNotif('❌ Insufficient balance','error');return;}
   closeModal('withdraw-modal');
-  var wl=document.getElementById('withdraw-loading'); wl.classList.add('show');
+  var wl=document.getElementById('withdraw-loading');wl.classList.add('show');
   setText('wl-text','Processing withdrawal...');
-  setTimeout(function(){ setText('wl-text','Verifying transaction...'); },800);
-  setTimeout(function(){ setText('wl-text','Almost done...'); },1600);
+  setTimeout(function(){setText('wl-text','Verifying transaction...');},800);
+  setTimeout(function(){setText('wl-text','Almost done...');},1600);
   setTimeout(function(){
     wl.classList.remove('show');
-    state.balanceNGN=Math.max(0,(state.balanceNGN||0)-amt);
-    state.miningSessionEarned=0;
-    if(state.balanceNGN===0){ state.balanceBTC=0; state.balanceUSD=0; state.balanceMining=0; state.sessionMiningCount=0; }
-    saveAll(); updateAllDisplays();
+    state.balanceNGN=Math.max(0,ngn-amt);state.miningSessionEarned=0;
+    if(state.balanceNGN===0){state.balanceBTC=0;state.balanceUSD=0;state.balanceMining=0;state.sessionMiningCount=0;}
+    fbSaveState();updateAllDisplays();
     var code=genCode();
     // Log withdrawal in Firebase
-    if(window._FB && state.user){
-      try{
-        window._fbSetDoc(
-          window._fbDoc(window._db,'withdrawals',state.user.uid+'_'+Date.now()),
-          {uid:state.user.uid,email:state.user.email,username:state.user.username,amount:amt,code:code,requestedAt:Date.now(),status:'pending'}
-        );
-      }catch(e){}
+    if(FB_ENABLED&&state.user){
+      try{db.collection('withdrawals').add({uid:state.user.uid,email:state.user.email,username:state.user.username,amount:amt,code:code,requestedAt:Date.now(),status:'pending'});}catch(e){}
     }
-    var msg=encodeURIComponent(
-      'Hello! I have successfully initiated a withdrawal from BitcoinBlastVault 💰\n\n'+
-      'Amount: ₦'+amt.toLocaleString('en',{minimumFractionDigits:2})+'\n'+
-      'Withdrawal Code: '+code+'\n'+
-      'Username: '+(state.user?state.user.username:'User')+'\n'+
-      'Email: '+(state.user?state.user.email:'')+'\n\n'+
-      'Please process my withdrawal. Thank you! ⛏️'
-    );
+    var msg=encodeURIComponent('Hello! I have successfully initiated a withdrawal from BitcoinBlastVault 💰\n\nAmount: ₦'+amt.toLocaleString('en',{minimumFractionDigits:2})+'\nWithdrawal Code: '+code+'\nUsername: '+(state.user?state.user.username:'User')+'\nEmail: '+(state.user?state.user.email:'')+'\n\nPlease process my withdrawal at your earliest convenience. Thank you! ⛏️');
     showSuccess('💸','Withdrawal Submitted!','Your code: '+code+'\nRedirecting to WhatsApp...');
-    setTimeout(function(){ window.open('https://wa.me/'+WHATSAPP+'?text='+msg,'_blank'); },1500);
+    setTimeout(function(){window.open('https://wa.me/'+WHATSAPP+'?text='+msg,'_blank');},1500);
   },2000);
 }
-function genCode(){ var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',code='BBV-'; for(var i=0;i<8;i++)code+=c[Math.floor(Math.random()*c.length)]; return code; }
+function genCode(){var c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';var code='BBV-';for(var i=0;i<8;i++)code+=c[Math.floor(Math.random()*c.length)];return code;}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  REFERRALS
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function updateRefCode(){
-  var el=document.getElementById('ref-code-display'); if(!el) return;
+  var el=document.getElementById('ref-code-display');if(!el)return;
   el.textContent=state.user?(state.user.refCode||state.user.username.slice(0,4).toUpperCase()):'----';
 }
 function copyRef(){
-  if(!state.user){ showNotif('Login to get your referral code','error'); return; }
+  if(!state.user){showNotif('Login to get your referral code','error');return;}
   var code=state.user.refCode||state.user.username.slice(0,4).toUpperCase();
-  if(navigator.clipboard){ navigator.clipboard.writeText(code).then(function(){ showNotif('✅ Referral code copied!'); }).catch(function(){ showNotif('Your code: '+code); }); }
-  else{ showNotif('Your code: '+code); }
+  if(navigator.clipboard){navigator.clipboard.writeText(code).then(function(){showNotif('✅ Referral code copied!');}).catch(function(){showNotif('Your code: '+code);});}
+  else{showNotif('Your code: '+code);}
 }
 async function redeemRef(){
-  if(!state.user){ showNotif('Please login first','error'); return; }
+  if(!state.user){showNotif('Please login first','error');return;}
   var code=document.getElementById('ref-redeem-input').value.trim().toUpperCase();
-  if(!code){ showNotif('Please enter a referral code','error'); return; }
+  if(!code){showNotif('Please enter a referral code','error');return;}
   var myCode=state.user.refCode||state.user.username.slice(0,4).toUpperCase();
-  if(code===myCode){ showNotif('❌ You cannot redeem your own referral code','error'); return; }
-  if((state.redeemedCodes||[]).indexOf(code)!==-1){ showNotif('❌ You have already redeemed this code','error'); return; }
-  if(!state.redeemedCodes) state.redeemedCodes=[];
+  if(code===myCode){showNotif('❌ You cannot redeem your own referral code','error');return;}
+  if(state.redeemedCodes.indexOf(code)!==-1){showNotif('❌ You have already redeemed this code','error');return;}
   state.redeemedCodes.push(code);
-  state.balanceNGN=parseFloat(((state.balanceNGN||0)+10).toFixed(2));
-  // Credit referrer in Firebase
-  if(window._FB){
+  state.balanceNGN=parseFloat((state.balanceNGN+10).toFixed(2));
+  // Give referrer credit
+  if(FB_ENABLED){
     try{
-      var q=window._fbQuery(window._fbCollection(window._db,'users'),window._fbWhere('refCode','==',code),window._fbLimit(1));
-      var snap=await window._fbGetDocs(q);
-      if(!snap.empty){
-        var ownerDoc=snap.docs[0];
-        var ownerData=ownerDoc.data();
-        var newNGN=((ownerData.balanceNGN)||0)+50;
-        await window._fbUpdateDoc(window._fbDoc(window._db,'users',ownerDoc.id),{balanceNGN:newNGN,refEarnings:((ownerData.refEarnings||0)+50)});
-      }
+      var snap=await db.collection('users').where('refCode','==',code).limit(1).get();
+      if(!snap.empty){var ow=snap.docs[0];db.collection('users').doc(ow.id).update({refEarnings:firebase.firestore.FieldValue.increment(50),balanceNGN:firebase.firestore.FieldValue.increment(50)});}
     }catch(e){}
   }
-  saveAll();
+  fbSaveState();
   document.getElementById('ref-redeem-input').value='';
   showSuccess('🎁','Code Redeemed!','₦50 added to referrer! You earned ₦10 bonus!');
   updateAllDisplays();
 }
-function shareWhatsApp(){
-  var msg=encodeURIComponent("I thought it was fake, but I actually got ₦100,000! From mining ⛏️!\nhttps://igiyg.buzz/sdGHSWG/ng-en?0505200053146857624&s=wa&");
-  window.open('https://wa.me/?text='+msg,'_blank');
-}
+function shareWhatsApp(){var msg=encodeURIComponent("I thought it was fake, but I actually got ₦100,000! From mining ⛏️!\nhttps://igiyg.buzz/sdGHSWG/ng-en?0505200053146857624&s=wa&");window.open('https://wa.me/?text='+msg,'_blank');}
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  TABS
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 function switchTab(tab){
-  ['ref','earn','swap'].forEach(function(t){ var el=document.getElementById('tab-'+t); if(el)el.style.display=t===tab?'block':'none'; });
-  var es=document.getElementById('earn-section'); if(es)es.style.display=tab==='earn'?'block':'none';
-  document.querySelectorAll('.tab-btn').forEach(function(b,i){ b.classList.toggle('active',['ref','earn','swap'][i]===tab); });
-  if(tab==='swap') updateSwapCoins();
+  ['ref','earn','swap'].forEach(function(t){var el=document.getElementById('tab-'+t);if(el)el.style.display=t===tab?'block':'none';});
+  var es=document.getElementById('earn-section');if(es)es.style.display=tab==='earn'?'block':'none';
+  document.querySelectorAll('.tab-btn').forEach(function(b,i){b.classList.toggle('active',['ref','earn','swap'][i]===tab);});
+  if(tab==='swap')updateSwapCoins();
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  NOTIFICATIONS
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 var notifTimer=null;
 function showNotif(msg,type){
-  var el=document.getElementById('notif'); el.textContent=msg; el.className='';
-  if(type)el.classList.add(type); el.classList.add('show');
+  var el=document.getElementById('notif');el.textContent=msg;el.className='';
+  if(type)el.classList.add(type);el.classList.add('show');
   if(notifTimer)clearTimeout(notifTimer);
-  notifTimer=setTimeout(function(){ el.classList.remove('show'); },3800);
+  notifTimer=setTimeout(function(){el.classList.remove('show');},3800);
 }
 var spTimer=null;
 function showSuccess(icon,title,msg){
-  setText('sp-icon',icon); setText('sp-title',title); setText('sp-msg',msg);
+  setText('sp-icon',icon);setText('sp-title',title);setText('sp-msg',msg);
   document.getElementById('success-popup').classList.add('show');
   if(spTimer)clearTimeout(spTimer);
-  spTimer=setTimeout(function(){ document.getElementById('success-popup').classList.remove('show'); },4500);
+  spTimer=setTimeout(function(){document.getElementById('success-popup').classList.remove('show');},4500);
 }
 
-// ════════════════════════════════════════════════
+// ═══════════════════════════════
 //  UTILS
-// ════════════════════════════════════════════════
-function gv(id){ var el=document.getElementById(id); return el?el.value:''; }
-function fmtDate(ts){ var d=new Date(ts); return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+// ═══════════════════════════════
+function gv(id){var el=document.getElementById(id);return el?el.value:'';}
+function fmtDate(ts){var d=new Date(ts);return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})+' '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
 </script>
 </body>
 </html>
