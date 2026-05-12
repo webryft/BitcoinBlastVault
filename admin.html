@@ -794,7 +794,7 @@ function openDetail(uid){
 function row(label, val, cls){
   return '<div class="m-row">'+
     '<span class="m-label">'+label+'</span>'+
-    '<span class="m-val '+(cls||'")>'+val+'</span>'+
+    '<span class="m-val '+(cls||'')+'">'+(val||'—')+'</span>'+
   '</div>';
 }
 
