@@ -909,6 +909,20 @@ function saveAll(){
     var uid=state.user.uid;
     var data=JSON.parse(JSON.stringify(state));
     data.lastSeen=Date.now();
+
+    // ── CRITICAL: never overwrite admin-controlled fields ──
+    // If we send boostLevel=0 or isEnabled=true here, it erases
+    // whatever the admin set in Firebase. Delete them so Firestore
+    // merge:true leaves them untouched.
+    delete data.boostLevel;
+    delete data.boostExpiry;
+    delete data.isEnabled;
+    if(data.user){
+      delete data.user.boostLevel;
+      delete data.user.boostExpiry;
+      delete data.user.isEnabled;
+    }
+
     fbSave(uid, data);
     lsSave();
   }
@@ -928,6 +942,27 @@ async function fbCheckBroadcast(){
       }
     }
   }catch(e){}
+}
+
+// ── Individual user notifications from admin ──
+function checkUserNotifications(cloudData){
+  if(!cloudData||!cloudData.notifications||!state.user) return;
+  var notifs = cloudData.notifications;
+  var unread = notifs.filter(function(n){ return !n.seen; });
+  if(!unread.length) return;
+  // Show most recent unread notification
+  var latest = unread[unread.length-1];
+  setTimeout(function(){ showNotif('🔔 '+latest.message,'info'); }, 2500);
+  // Mark all as seen in Firebase
+  var marked = notifs.map(function(n){ return Object.assign({},n,{seen:true}); });
+  if(window._FB && state.user && state.user.uid){
+    try{
+      window._fbUpdateDoc(
+        window._fbDoc(window._db,'users',state.user.uid),
+        {notifications: marked}
+      );
+    }catch(e){}
+  }
 }
 
 // ════════════════════════════════════════════════
@@ -964,10 +999,31 @@ async function onFirebaseReady(){
   var savedUid = localStorage.getItem('bbv_active_uid');
   if(savedUid && state.user){
     var cloud = await fbLoad(savedUid);
-    if(cloud && cloud.user){
+    if(cloud){
       Object.assign(state, cloud);
+
+      // ── CRITICAL: always honour admin-controlled fields from Firebase ──
+      // These must come FROM Firebase, never from local state.
+      if(cloud.boostLevel  !== undefined) state.boostLevel  = cloud.boostLevel;
+      if(cloud.boostExpiry !== undefined) state.boostExpiry = cloud.boostExpiry;
+      if(cloud.isEnabled   !== undefined) state.isEnabled   = cloud.isEnabled;
+      // Restore user object from cloud
+      if(cloud.user) state.user = cloud.user;
+
+      // If admin disabled this account, stop right here
+      if(state.isEnabled === false){
+        showNotif('⛔ Your account has been disabled. Contact support.','error');
+        state.user = null;
+        localStorage.removeItem('bbv_active_uid');
+        updateAllDisplays();
+        return;
+      }
+
       onUserReady();
       updateAllDisplays();
+
+      // Check for individual admin notifications
+      checkUserNotifications(cloud);
     }
     fbCheckBroadcast();
   }
@@ -1083,11 +1139,16 @@ async function submitLogin(){
   if(!savedState){ savedState = lsLoadUser(uid); }
 
   if(savedState){
-    // Restore all state fields except user object itself
+    // Restore all state fields
     var keys=['miningActive','miningStart','miningSpeed','miningSessionEarned',
       'sessionMiningCount','balanceMining','balanceBTC','balanceUSD','balanceNGN',
-      'darkMode','alarmTime','alarmLabel','redeemedCodes','boostLevel','boostExpiry','isEnabled'];
+      'darkMode','alarmTime','alarmLabel','redeemedCodes'];
     keys.forEach(function(k){ if(savedState[k]!==undefined) state[k]=savedState[k]; });
+
+    // ── CRITICAL: admin-controlled fields always come from Firebase ──
+    if(savedState.boostLevel  !== undefined) state.boostLevel  = savedState.boostLevel;
+    if(savedState.boostExpiry !== undefined) state.boostExpiry = savedState.boostExpiry;
+    if(savedState.isEnabled   !== undefined) state.isEnabled   = savedState.isEnabled;
   }
 
   state.user = found;
@@ -1102,6 +1163,7 @@ async function submitLogin(){
   onUserReady();
   updateAllDisplays();
   fbCheckBroadcast();
+  if(savedState) checkUserNotifications(savedState);
 }
 
 // ════════════════════════════════════════════════
@@ -1301,7 +1363,7 @@ function updateSwapCoins(){
     prevRates[c.key]=now;
   });
 }
-function downloadApk(){ showNotif('📲 Starting download...'); var a=document.createElement('a'); a.href='BTCblastvault.apk'; a.download='BTCblastvault.apk'; a.click(); }
+function downloadApk(){ showNotif('📲 Starting download...'); var a=document.createElement('a'); a.href='BitcoinBlastVault.apk'; a.download='BitcoinBlastVault.apk'; a.click(); }
 
 // ════════════════════════════════════════════════
 //  IMAGE ROTATION

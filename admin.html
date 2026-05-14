@@ -827,21 +827,40 @@ function mrow(label, val, cls){
 async function setEnabled(uid, enabled){
   showLoad(enabled?'Enabling user account...':'Disabling user account...');
   try{
-    /* Update top-level isEnabled AND nested user.isEnabled */
-    await window._fbUpdateDoc(window._fbDoc(window._db,'users',uid),{
-      'isEnabled':      enabled,
-      'user.isEnabled': enabled
+    var u = findUser(uid);
+    var existingNotifs = (u && u.data && u.data.notifications) || [];
+    existingNotifs.push({
+      message: enabled
+        ? '✅ Your account has been re-enabled. You can now mine again!'
+        : '⛔ Your account has been suspended. Contact support for help.',
+      time: new Date().toISOString(),
+      seen: false
     });
-    var u=findUser(uid);
+
+    // Update both top-level AND nested user.isEnabled
+    // so index.html sees it correctly on any load path
+    await window._fbUpdateDoc(window._fbDoc(window._db,'users',uid),{
+      'isEnabled':        enabled,
+      'user.isEnabled':   enabled,
+      'notifications':    existingNotifs
+    });
+
+    // Update local cache immediately
     if(u){
-      u.data.isEnabled=enabled;
-      if(u.data.user) u.data.user.isEnabled=enabled;
+      u.data.isEnabled = enabled;
+      u.data.notifications = existingNotifs;
+      if(u.data.user) u.data.user.isEnabled = enabled;
     }
+
     updateStats();
     renderTable(filteredUsers);
     hideLoad();
-    toast(enabled?'✅ User account enabled':'⛔ User account disabled', enabled?'t-ok':'t-err');
-    await appendLog(uid, enabled?'account_enabled':'account_disabled', 'admin');
+    toast(
+      enabled ? '✅ User account enabled' : '⛔ User account disabled',
+      enabled ? 't-ok' : 't-err'
+    );
+    await appendLog(uid, enabled?'account_enabled':'account_disabled','admin');
+
   } catch(e){ hideLoad(); toast('Error: '+(e.message||e),'t-err'); }
 }
 
@@ -889,31 +908,46 @@ async function confirmBoost(){
   var expiry = Date.now() + BOOST_DURATION_MS; // 30 days from now
 
   try{
-    /* Update top-level fields AND nested user.* fields so both index.html
-       and admin see the same values on next load */
-    await window._fbUpdateDoc(window._fbDoc(window._db,'users',uid),{
-      'boostLevel':       lvl,
-      'miningSpeed':      lvl,
-      'boostExpiry':      expiry,
-      'boostActivatedAt': now,
-      'miningActive':     false,
-      'miningStart':      null,
-      'user.boostLevel':  lvl,
-      'user.boostExpiry': expiry
+    // Get existing notifications so we can append
+    var u = findUser(uid);
+    var existingNotifs = (u && u.data && u.data.notifications) || [];
+    existingNotifs.push({
+      message: '⚡ Your account has been boosted to Speed ' + lvl +
+               '! You now earn ₦' + (lvl===1000?'1,000 every 120hrs':'2,000 every 130hrs') + '. Tap to start mining!',
+      time: now,
+      seen: false
     });
 
-    /* Update local cache */
-    var u=findUser(uid);
+    // Write ALL fields that index.html reads for boost
+    // Top-level fields (read by state on load)
+    // user.* fields (read by user object)
+    // notifications so user sees instant feedback
+    await window._fbUpdateDoc(window._fbDoc(window._db,'users',uid),{
+      'boostLevel':        lvl,
+      'miningSpeed':       lvl,
+      'boostExpiry':       expiry,
+      'boostActivatedAt':  now,
+      'miningActive':      false,
+      'miningStart':       null,
+      'user.boostLevel':   lvl,
+      'user.boostExpiry':  expiry,
+      'user.miningSpeed':  lvl,
+      'notifications':     existingNotifs
+    });
+
+    // Update local cache immediately so table reflects correctly
     if(u){
-      u.data.boostLevel       = lvl;
-      u.data.miningSpeed      = lvl;
-      u.data.boostExpiry      = expiry;
-      u.data.boostActivatedAt = now;
-      u.data.miningActive     = false;
-      u.data.miningStart      = null;
+      u.data.boostLevel        = lvl;
+      u.data.miningSpeed       = lvl;
+      u.data.boostExpiry       = expiry;
+      u.data.boostActivatedAt  = now;
+      u.data.miningActive      = false;
+      u.data.miningStart       = null;
+      u.data.notifications     = existingNotifs;
       if(u.data.user){
         u.data.user.boostLevel  = lvl;
         u.data.user.boostExpiry = expiry;
+        u.data.user.miningSpeed = lvl;
       }
     }
 
@@ -921,8 +955,12 @@ async function confirmBoost(){
     updateStats();
     renderTable(filteredUsers);
     hideLoad();
-    toast('⚡ Speed '+lvl+' boost activated! Expires in 30 days.','t-ok');
-  } catch(e){ hideLoad(); toast('Error: '+(e.message||e),'t-err'); }
+    toast('⚡ Speed '+lvl+' boost activated! User will see it on next login.','t-ok');
+
+  } catch(e){
+    hideLoad();
+    toast('Error activating boost: '+(e.message||e),'t-err');
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -996,13 +1034,22 @@ async function sendUserNotif(){
   showLoad('Sending notification...');
   try{
     var u=findUser(pendingNotifUid);
-    var notifs=(u&&u.data.notifications)||[];
-    notifs.push({message:msg, time:new Date().toISOString(), seen:false});
-    await window._fbUpdateDoc(window._fbDoc(window._db,'users',pendingNotifUid),
-      {notifications:notifs});
+    // Get existing notifications and append new one
+    var notifs=(u&&u.data&&u.data.notifications)||[];
+    notifs.push({
+      message: msg,
+      time: new Date().toISOString(),
+      seen: false
+    });
+    // Write back to Firebase — index.html reads this on load
+    await window._fbUpdateDoc(
+      window._fbDoc(window._db,'users',pendingNotifUid),
+      {notifications: notifs}
+    );
+    // Update local cache
     if(u) u.data.notifications=notifs;
     hideLoad();
-    toast('🔔 Notification sent','t-ok');
+    toast('🔔 Notification sent — user will see it on next login','t-ok');
   } catch(e){ hideLoad(); toast('Error: '+(e.message||e),'t-err'); }
 }
 
